@@ -1,7 +1,7 @@
 -- ====================================================================================================================
 -- ZKV_Takedowns by Kvalyr for CP2077
 -- ====================================================================================================================
-local version = "0.1"
+local version = "0.1.1"
 local modString = "ZKV_Takedowns v" .. version
 ZKV_Takedowns = {
     description = modString .. " - Takedowns & Finishers Overhaul for CP2077 - Version: " .. version
