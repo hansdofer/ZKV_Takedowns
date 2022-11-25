@@ -1,0 +1,12 @@
+*.sqlite3
+*.log
+*.zip
+*.png
+*.pspimage
+install_log.xml
+
+.symlink
+/archive
+/bin
+
+

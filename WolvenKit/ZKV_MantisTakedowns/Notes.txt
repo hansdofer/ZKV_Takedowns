@@ -1,0 +1,5 @@
+Copied tags from mantis blade finisher workspots to takedown workspots. Enables invulnerability during animation when using takedown anim as a finisher.
+	workspotTree.tags.tags 	-> FinisherWorkspot
+				-> wsPlayerDamageReduction
+
+	Used by OnWorkspotStartedEvent() in player.swift to apply effects to player during workspot based on tags present on the workspot
