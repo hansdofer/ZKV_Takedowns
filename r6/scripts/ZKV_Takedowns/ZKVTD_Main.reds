@@ -208,7 +208,7 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
     }else {
         prefix = prefix + ".finisher";
     };
-    ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - isTakedown: " + ToString(isTakedown) + " - count: " + count + " - prefix: " + prefix);
+    // ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - isTakedown: " + ToString(isTakedown) + " - count: " + count + " - prefix: " + prefix);
 
     if count < 1 {
         ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - Returning empty anim array! - weaponType: " + ToString(weaponType) + " - isTakedown: " + ToString(isTakedown) + " - count: " + ToString(count));
@@ -227,11 +227,53 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
     return animArray;
 }
 
+
+public final static func ZKV_IsEffectTagInEffectSet(activator: wref<GameObject>, effectSetName: CName, effectTag: CName) -> Bool {
+    return GameInstance.GetGameEffectSystem(activator.GetGame()).HasEffect(effectSetName, effectTag);
+}
+
+public final static func ZKV_Takedowns_GetBestEffectSetForEffectTag(activator: wref<GameObject>, effectTag: CName, out effectSet: CName) -> Bool{
+    // TODO: Get a dynamic list of effectSets from lua & TweakDB instead of hardcoding these
+    let finisherEffectSet: CName = n"playFinisher";
+    let takedownEffectSet: CName = n"takedowns";
+    let zkvtdEffectSet: CName = n"zkv_takedowns";
+
+    // DEBUG
+    // let effectInSet_zkvtd: Bool = ZKV_IsEffectTagInEffectSet(activator, zkvtdEffectSet, effectTag);
+    // let effectInSet_finishers: Bool = ZKV_IsEffectTagInEffectSet(activator, finisherEffectSet, effectTag);
+    // let effectInSet_takedowns: Bool = ZKV_IsEffectTagInEffectSet(activator, takedownEffectSet, effectTag);
+    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - effectTag: " + NameToString(effectTag) + " - effectInSet_zkvtd: " + effectInSet_zkvtd);
+    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - effectTag: " + NameToString(effectTag) + " - effectInSet_finishers: " + effectInSet_finishers);
+    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - effectTag: " + NameToString(effectTag) + " - effectInSet_takedowns: " + effectInSet_takedowns);
+    // DEBUG
+
+    // Prefer ZKVTD effectSet
+    if ZKV_IsEffectTagInEffectSet(activator, zkvtdEffectSet, effectTag) {
+        effectSet = zkvtdEffectSet;
+        return true;
+    }
+
+    // Fall back to CDPR finishers/takedowns effectSets if absent from ZKVTD
+    if ZKV_IsEffectTagInEffectSet(activator, finisherEffectSet, effectTag) {
+        effectSet = finisherEffectSet;
+        return true;
+    }
+    if ZKV_IsEffectTagInEffectSet(activator, takedownEffectSet, effectTag) {
+        effectSet = takedownEffectSet;
+        return true;
+    }
+
+    // If we've reached this point, the effectTag isn't present in any of our known effectSets - This is a bad time.
+    ZKVLog(s"ERROR: effectTag not found in any known effectSets: " + NameToString(effectTag));
+
+    return false;
+}
+
 public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: ref<StateGameScriptInterface>, owner: ref<GameObject>, target: ref<GameObject>, weaponType: gamedataItemType, katanaForBlades: Bool) -> CName {
     let countFinishers: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType, false);
     let countTakedowns: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType, true);
     let totalAnimCount: Int32 = countFinishers + countTakedowns;
-    let animTag: CName;
+    let effectTag: CName;
     let effectSet: CName = n"playFinisher";
     let randIndex: Int32;
     let randMax: Int32;
@@ -239,7 +281,7 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
     let animArray_finishers: array<CName>;
     let animArray_takedowns: array<CName>;
 
-    ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - weaponType: " + ToString(weaponType) + " - countFinishers: " + countFinishers + " - countTakedowns: " + countTakedowns);
+    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - weaponType: " + ToString(weaponType) + " - countFinishers: " + countFinishers + " - countTakedowns: " + countTakedowns);
 
     if totalAnimCount < 1 {
         return n"finisher_default";
@@ -252,7 +294,7 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
 
     if countTakedowns < 1{
         takedownsThreshold = randMax + 1;
-        ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Takedowns! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
+        // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Takedowns! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
     }
     else{
         animArray_takedowns = ZKV_Takedowns_GetAnimsForWeapon(weaponType, true, countTakedowns);
@@ -260,26 +302,32 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
 
     if countFinishers < 1{
         takedownsThreshold = 0;
-        ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Finishers! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
+        // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Finishers! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
     }
     else{
         animArray_finishers = ZKV_Takedowns_GetAnimsForWeapon(weaponType, false, countFinishers);
     };
 
-    ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - randMax: " + randMax + " - takedownsThreshold: " + takedownsThreshold + " - randIndex: " + randIndex);
+    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - randMax: " + randMax + " - takedownsThreshold: " + takedownsThreshold + " - randIndex: " + randIndex);
 
     if randIndex >= takedownsThreshold {
-        effectSet = n"takedowns";
-        animTag = ZKV_Takedowns_GetRandomFromArray(animArray_takedowns);
+        effectTag = ZKV_Takedowns_GetRandomFromArray(animArray_takedowns);
     }
     else{
-        effectSet = n"playFinisher";
-        animTag = ZKV_Takedowns_GetRandomFromArray(animArray_finishers);
+        effectTag = ZKV_Takedowns_GetRandomFromArray(animArray_finishers);
     }
-    ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - effectSet: " + NameToString(effectSet) + " - animTag:" + NameToString(animTag));
 
-    TakedownGameEffectHelper.FillTakedownData(scriptInterface.executionOwner, owner, target, effectSet, animTag);
-    return animTag;
+    // Get the best effectSet for the requested effectTag, or fall back to default
+    if !ZKV_Takedowns_GetBestEffectSetForEffectTag(owner, effectTag, effectSet){
+        ZKVLog(s"ERROR: Failed to get effectSet. Falling back to default. effectTag: " + NameToString(effectTag));
+        effectSet = n"playFinisher";
+        effectTag = n"finisher_default";
+    }
+
+    ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - effectSet: " + NameToString(effectSet) + " - effectTag:" + NameToString(effectTag));
+
+    TakedownGameEffectHelper.FillTakedownData(scriptInterface.executionOwner, owner, target, effectSet, effectTag);
+    return effectTag;
 }
 
 

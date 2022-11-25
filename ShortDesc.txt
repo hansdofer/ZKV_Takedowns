@@ -1,4 +1,0 @@
-Adds the following features:
-* Melee Weapon finishers as stealth takedowns (Configurable, and extensible with new animations from other mods)
-* Takedowns without grappling first - Initiate grapple OR takedown from stealth
-* Mantis Blades finisher: Use aerial takedown animation instead of normal animation, either 50% of the time or all the time
