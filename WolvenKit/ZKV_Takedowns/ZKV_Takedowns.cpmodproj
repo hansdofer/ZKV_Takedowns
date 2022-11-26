@@ -2,7 +2,7 @@
 <CP77Mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Author>Kvalyr</Author>
   <Email />
-  <Name>ZKV_MantisTakedowns</Name>
+  <Name>ZKV_Takedowns</Name>
   <Version />
   <IsRedMod>false</IsRedMod>
   <ExecuteDeploy>false</ExecuteDeploy>

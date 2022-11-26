@@ -4,11 +4,12 @@
 *.png
 *.pspimage
 install_log.xml
+Notes.txt
 
 .symlink
 /archive
 /bin
 /Meta
-
-
+unused/
+junk/
 

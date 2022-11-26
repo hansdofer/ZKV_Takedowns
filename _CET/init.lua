@@ -1,7 +1,7 @@
 -- ====================================================================================================================
 -- ZKV_Takedowns by Kvalyr for CP2077
 -- ====================================================================================================================
-local version = "0.1.1"
+local version = "0.2.0"
 local modString = "ZKV_Takedowns v" .. version
 ZKV_Takedowns = {
     description = modString .. " - Takedowns & Finishers Overhaul for CP2077 - Version: " .. version
@@ -78,35 +78,26 @@ local function SetupMeleeTakedowns()
         TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.instigatorPrereqs", instigatorPrereqs)
     end
 
-    local finisherAnims = ZKV_Takedowns.config["finisherAnims"]
-    if finisherAnims == nil then
-        ZKV_Takedowns.print("ERROR: nil finisherAnims table!")
-        finisherAnims = {}
+    local takedownAnims = ZKV_Takedowns.config["takedownAnims"]
+    if takedownAnims == nil then
+        ZKV_Takedowns.print("ERROR: nil takedownAnims table!")
+        takedownAnims = {}
     end
 
-    for weapon_key, animTable in pairs(finisherAnims) do
+    for weapon_key, animTable in pairs(takedownAnims) do
         ZKV_Takedowns.print("ZKVTD ===================================== ")
-        ZKV_Takedowns.print("ZKVTD", weapon_key, #animTable)
-        local finishersAnimTable = animTable["finishers"] or {}
-        local takedownsAnimTable = animTable["takedowns"] or {}
-        local finishersCount = #finishersAnimTable
-        local takedownsCount = #takedownsAnimTable
+        local takedownsCount = #animTable
+        ZKV_Takedowns.print("ZKVTD", weapon_key, takedownsCount)
 
-        local finishersCountFlatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".countFinishers"
-        local takedownsCountFlatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".countTakedowns"
-
-        TweakDB:SetFlat(finishersCountFlatKey, tostring(finishersCount))
+        local takedownsCountFlatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".count"
         TweakDB:SetFlat(takedownsCountFlatKey, tostring(takedownsCount))
 
-        for idx_key, anim in ipairs(finishersAnimTable) do
-            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".finisher" .. idx_key-1
+        for idx_key, anim in ipairs(animTable) do
+            -- local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".takedown" .. idx_key-1
+            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. idx_key-1
             TweakDB:SetFlat(flatKey, anim)
         end
-        for idx_key, anim in ipairs(takedownsAnimTable) do
-            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".takedown" .. idx_key-1
-            TweakDB:SetFlat(flatKey, anim)
-        end
-        ZKV_Takedowns.print("ZKVTD", weapon_key, finishersCount, takedownsCount)
+        ZKV_Takedowns.print("ZKVTD", weapon_key, takedownsCount)
         -- e.g.;
         -- ZKVTD.MeleeTakedownAnims.Wea_Katana.count_finishers -> "3"
         -- ZKVTD.MeleeTakedownAnims.Wea_Katana.count_takedowns -> "2"

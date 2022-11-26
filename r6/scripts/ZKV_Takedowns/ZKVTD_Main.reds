@@ -57,7 +57,6 @@ public static func ZKVLog(const str: script_ref<String>) -> Void {
             // Kv
             case n"Kv_MeleeTakedown":
                 // ZKVLog(s"ZKV - TakedownActionNameToEnum() - actionName: " + NameToString(actionName));
-                // TODO: Need to reuse one of the existing types above and differentiate somehow else
                 // return ETakedownActionType.LeapToTarget; // DEBUG: -> AerialTakedown
                 return ETakedownActionType.KillTarget;
             // Kv End
@@ -182,36 +181,25 @@ public final static func ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType: g
     return s"ZKVTD.MeleeTakedownAnims." + weaponTypeStr;
 }
 
-public final static func ZKV_Takedowns_GetAnimCountForWeapon(weaponType: gamedataItemType, isTakedown: Bool) -> Int32{
+public final static func ZKV_Takedowns_GetAnimCountForWeapon(weaponType: gamedataItemType) -> Int32{
     let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType);
-    let countStr: String;
-    let count: Int32;
-    let countKey: String;
-    if isTakedown{
-        countKey = prefix + ".countTakedowns";
-    }else {
-        countKey = prefix + ".countFinishers";
-    };
-    countStr = TweakDBInterface.GetString(TDBID.Create(countKey), s"0");
-    count = StringToInt(countStr);
+    let countKey: String = prefix + ".count";
+    let countStr: String = TweakDBInterface.GetString(TDBID.Create(countKey), s"0");
+    let count: Int32 = StringToInt(countStr);
     return count;
 }
 
-public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataItemType, isTakedown: Bool, count: Int32) -> array<CName>{
+public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataItemType, count: Int32) -> array<CName>{
     let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType);
     let animKey: TweakDBID;
     let animString: String;
     let animArray: array<CName>;
     let i: Int32;
-    if isTakedown{
-        prefix = prefix + ".takedown";
-    }else {
-        prefix = prefix + ".finisher";
-    };
-    // ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - isTakedown: " + ToString(isTakedown) + " - count: " + count + " - prefix: " + prefix);
+
+    // ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - count: " + count + " - prefix: " + prefix);
 
     if count < 1 {
-        ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - Returning empty anim array! - weaponType: " + ToString(weaponType) + " - isTakedown: " + ToString(isTakedown) + " - count: " + ToString(count));
+        ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - Returning empty anim array! - weaponType: " + ToString(weaponType) + " - count: " + ToString(count));
         return animArray;
     }
 
@@ -270,52 +258,21 @@ public final static func ZKV_Takedowns_GetBestEffectSetForEffectTag(activator: w
 }
 
 public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: ref<StateGameScriptInterface>, owner: ref<GameObject>, target: ref<GameObject>, weaponType: gamedataItemType, katanaForBlades: Bool) -> CName {
-    let countFinishers: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType, false);
-    let countTakedowns: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType, true);
-    let totalAnimCount: Int32 = countFinishers + countTakedowns;
+    let countTakedowns: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType);
     let effectTag: CName;
     let effectSet: CName = n"playFinisher";
     let randIndex: Int32;
     let randMax: Int32;
-    let takedownsThreshold: Int32;
-    let animArray_finishers: array<CName>;
     let animArray_takedowns: array<CName>;
 
     // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - weaponType: " + ToString(weaponType) + " - countFinishers: " + countFinishers + " - countTakedowns: " + countTakedowns);
 
-    if totalAnimCount < 1 {
+    if countTakedowns < 1 {
         return n"finisher_default";
     }
 
-    // Randomize
-    randMax = totalAnimCount * 100;
-    randIndex = RandRange(0, randMax);
-    takedownsThreshold = countFinishers * 100;
-
-    if countTakedowns < 1{
-        takedownsThreshold = randMax + 1;
-        // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Takedowns! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
-    }
-    else{
-        animArray_takedowns = ZKV_Takedowns_GetAnimsForWeapon(weaponType, true, countTakedowns);
-    };
-
-    if countFinishers < 1{
-        takedownsThreshold = 0;
-        // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - No Finishers! - weaponType: " + ToString(weaponType) + " - takedownsThreshold: " + takedownsThreshold);
-    }
-    else{
-        animArray_finishers = ZKV_Takedowns_GetAnimsForWeapon(weaponType, false, countFinishers);
-    };
-
-    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - randMax: " + randMax + " - takedownsThreshold: " + takedownsThreshold + " - randIndex: " + randIndex);
-
-    if randIndex >= takedownsThreshold {
-        effectTag = ZKV_Takedowns_GetRandomFromArray(animArray_takedowns);
-    }
-    else{
-        effectTag = ZKV_Takedowns_GetRandomFromArray(animArray_finishers);
-    }
+    animArray_takedowns = ZKV_Takedowns_GetAnimsForWeapon(weaponType, countTakedowns);
+    effectTag = ZKV_Takedowns_GetRandomFromArray(animArray_takedowns);
 
     // Get the best effectSet for the requested effectTag, or fall back to default
     if !ZKV_Takedowns_GetBestEffectSetForEffectTag(owner, effectTag, effectSet){
