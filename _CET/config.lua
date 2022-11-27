@@ -18,6 +18,11 @@ local MantisSwap_Finishers_MixDifferentAnimations = false
 local Takedowns_OnlyWithMeleeWeaponHeld = true
 
 
+-- By default, takedowns with blunt weapons (fists, gorilla arms, clubs, bats, etc.) leave the target unconscious
+-- Set this to false to make those takedowns lethal instead
+local Takedowns_NonLethalBlunt = true
+
+
 -- ====================================================================================================================
 -- !! Here be dragons !!
 -- Changing anything below this line is unsupported. Don't complain to the mod author if things break when you change stuff below this point.
@@ -142,6 +147,7 @@ local takedownAnimsByWeapon = {
 ZKV_Takedowns.config["MantisSwap_Finishers_UseAerialTakedownAnimation"] = MantisSwap_Finishers_UseAerialTakedownAnimation
 ZKV_Takedowns.config["MantisSwap_Finishers_MixDifferentAnimations"] = MantisSwap_Finishers_MixDifferentAnimations
 ZKV_Takedowns.config["Takedowns_OnlyWithMeleeWeaponHeld"] = Takedowns_OnlyWithMeleeWeaponHeld
+ZKV_Takedowns.config["Takedowns_NonLethalBlunt"] = Takedowns_NonLethalBlunt
 ZKV_Takedowns.config["takedownAnims"] = takedownAnimsByWeapon
 
 ZKV_Takedowns.print("Config Finished!")

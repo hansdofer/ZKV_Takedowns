@@ -139,20 +139,26 @@ public final static func ZKV_IsMantisBladesActive(owner: ref<GameObject>) -> Boo
 
 
 public final static func ZKV_Takedowns_LethalityEffectByWeapon(weaponType: gamedataItemType, aerial: Bool) -> CName {
-    let unconsciousTag: CName = n"setUnconscious";
-    if aerial {
-        unconsciousTag = n"setUnconsciousAerialTakedown";
+    let bluntTag: CName = n"kill";
+    let nonLethalBluntKey: TweakDBID = TDBID.Create(s"ZKVTD.Takedowns.nonLethalBlunt");
+    let nonLethalBlunt: Bool = TweakDBInterface.GetBool(nonLethalBluntKey, true);
+    if nonLethalBlunt{
+        if aerial {
+            bluntTag = n"setUnconsciousAerialTakedown";
+        }else {
+            bluntTag = n"setUnconscious";
+        };
     };
     switch weaponType {
         // TODO: Can switch cases just fall through in this lang?
         case gamedataItemType.Wea_Fists:
-            return unconsciousTag;
+            return bluntTag;
         case gamedataItemType.Wea_OneHandedClub:
-            return unconsciousTag;
+            return bluntTag;
         case gamedataItemType.Wea_TwoHandedClub:
-            return unconsciousTag;
+            return bluntTag;
         case gamedataItemType.Cyb_StrongArms:
-            return unconsciousTag;
+            return bluntTag;
         default:
             return n"kill";
     };
@@ -163,23 +169,30 @@ public final static func ZKV_Takedowns_LethalityEffectByWeapon(weaponType: gamed
 public final static func ZKV_Takedowns_GetRandomFromArray(workspots: array<CName>) -> CName {
     let randIndex: Int32;
     let numWorkspots: Int32 = ArraySize(workspots);
+
+    // ZKVLog(s"ZKV_Takedowns_GetRandomFromArray - numWorkspots: " + ToString(numWorkspots));
+
     switch numWorkspots {
         case 0:
             ZKVLog(s"Empty array of takedown workspots!");
             return n"finisher_default";
         case 1:
+            // ZKVLog(s"ZKV_Takedowns_GetRandomFromArray - 1 workspot only, returning idx 0");
             return workspots[0];
         default:
-            randIndex = RandRange(0, numWorkspots - 1);
+            randIndex = RandRange(0, numWorkspots);
+            // ZKVLog(s"ZKV_Takedowns_GetRandomFromArray - numWorkspots: " + ToString(numWorkspots) + " - randIndex: " + randIndex);
             return workspots[randIndex];
     };
 }
+
 
 public final static func ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType: gamedataItemType) -> String{
     // TODO: Use an enum for this instead?
     let weaponTypeStr: String = ToString(weaponType);
     return s"ZKVTD.MeleeTakedownAnims." + weaponTypeStr;
 }
+
 
 public final static func ZKV_Takedowns_GetAnimCountForWeapon(weaponType: gamedataItemType) -> Int32{
     let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType);
@@ -188,6 +201,7 @@ public final static func ZKV_Takedowns_GetAnimCountForWeapon(weaponType: gamedat
     let count: Int32 = StringToInt(countStr);
     return count;
 }
+
 
 public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataItemType, count: Int32) -> array<CName>{
     let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType);
@@ -219,6 +233,7 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
 public final static func ZKV_IsEffectTagInEffectSet(activator: wref<GameObject>, effectSetName: CName, effectTag: CName) -> Bool {
     return GameInstance.GetGameEffectSystem(activator.GetGame()).HasEffect(effectSetName, effectTag);
 }
+
 
 public final static func ZKV_Takedowns_GetBestEffectSetForEffectTag(activator: wref<GameObject>, effectTag: CName, out effectSet: CName) -> Bool{
     // TODO: Get a dynamic list of effectSets from lua & TweakDB instead of hardcoding these
@@ -257,6 +272,7 @@ public final static func ZKV_Takedowns_GetBestEffectSetForEffectTag(activator: w
     return false;
 }
 
+
 public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: ref<StateGameScriptInterface>, owner: ref<GameObject>, target: ref<GameObject>, weaponType: gamedataItemType, katanaForBlades: Bool) -> CName {
     let countTakedowns: Int32 = ZKV_Takedowns_GetAnimCountForWeapon(weaponType);
     let effectTag: CName;
@@ -265,7 +281,6 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
     let randMax: Int32;
     let animArray_takedowns: array<CName>;
 
-    // ZKVLog(s"ZKV_Takedowns_DoFinisherByWeaponType - weaponType: " + ToString(weaponType) + " - countFinishers: " + countFinishers + " - countTakedowns: " + countTakedowns);
 
     if countTakedowns < 1 {
         return n"finisher_default";

@@ -1,7 +1,7 @@
 -- ====================================================================================================================
 -- ZKV_Takedowns by Kvalyr for CP2077
 -- ====================================================================================================================
-local version = "0.2.0"
+local version = "0.2.1"
 local modString = "ZKV_Takedowns v" .. version
 ZKV_Takedowns = {
     description = modString .. " - Takedowns & Finishers Overhaul for CP2077 - Version: " .. version
@@ -43,6 +43,13 @@ local function SetupConfig()
             ZKV_Takedowns.print("Config: ", key, ":", value, "(table)")
         end
     end
+
+    local nonLethalBlunt = ZKV_Takedowns.config["Takedowns_NonLethalBlunt"]
+    if nonLethalBlunt == nil then
+        nonLethalBlunt = true
+    end
+    TweakDB:SetFlat("ZKVTD.Takedowns.nonLethalBlunt", nonLethalBlunt)
+
 end
 
 
