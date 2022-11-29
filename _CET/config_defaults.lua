@@ -24,6 +24,10 @@ local Takedowns_OnlyWithMeleeWeaponHeld = true
 local Takedowns_NonLethalBlunt = true
 
 
+
+local StealthMeleeDamageMultiplier = 1.30 -- Default in CP2077 v1.61: 1.30
+
+
 -- -- Unlock camera during finishers & takedowns
 -- -- May cause weirdness
 -- -- WIP - CURRENTLY UNUSED
@@ -39,5 +43,6 @@ ZKVTD.SetDefaultConfigValue("MantisSwap_Finishers_UseAerialTakedownAnimation", M
 ZKVTD.SetDefaultConfigValue("MantisSwap_Finishers_MixDifferentAnimations", MantisSwap_Finishers_MixDifferentAnimations)
 ZKVTD.SetDefaultConfigValue("Takedowns_OnlyWithMeleeWeaponHeld", Takedowns_OnlyWithMeleeWeaponHeld)
 ZKVTD.SetDefaultConfigValue("Takedowns_NonLethalBlunt", Takedowns_NonLethalBlunt)
+ZKVTD.SetDefaultConfigValue("Misc_Stealth_MeleeMult", StealthMeleeDamageMultiplier)
 
 ZKVTD.print("Default Configuration loaded!")

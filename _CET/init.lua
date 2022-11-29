@@ -2,7 +2,7 @@
 -- ZKV_Takedowns for CP2077 by Kvalyr
 -- ====================================================================================================================
 
-local version = "0.3.0"
+local version = "0.3.1"
 local modString = "ZKV_Takedowns v" .. version
 local ZKV_Takedowns = {
     version = version,
@@ -13,7 +13,7 @@ local ZKV_Takedowns = {
     configFileName = "config.json",
 }
 local ZKVTD = ZKV_Takedowns
-ZKVTD.debugMode = false
+ZKVTD.debugMode = true
 ZKVTD.version = version
 ZKVTD.modString = modString
 ZKVTD.print = function(...) print(modString, ": ", ...) end
@@ -128,7 +128,7 @@ local function addConfigCallback_ByKey(callbackKey, callbackFunc)
     end
 end
 
-local function addConfigCallback_SetFlat(flatKey, configKey, default, callbackKey)
+local function addConfigCallback_SetFlat(flatKey, configKey, default, callbackKey, multiplier)
     if default == nil then default = true end
 
     local function callbackFunc(newValue)
@@ -201,11 +201,17 @@ local function SetupDefaultConfig()
 
     dumpConfig()
 
+    -- TODO: Move these callback setups
+    -- Takedowns
     addConfigCallback_ByKey("Update_Takedowns_OnlyMelee", Update_Takedowns_OnlyMelee)
     addConfigCallback_SetFlat("ZKVTD.Takedowns.nonLethalBlunt", "Takedowns_NonLethalBlunt", true, "Update_Takedowns_NonLethalBlunt")
+
+    -- MTB AnimSwap
     addConfigCallback_SetFlat("ZKVTD.MantisBladesAnimSwap.UseAerial", "MantisSwap_Finishers_UseAerialTakedownAnimation", true, "Update_MTBAnimSwap_UseAerial")
     addConfigCallback_SetFlat("ZKVTD.MantisBladesAnimSwap.RandomChoice", "MantisSwap_Finishers_MixDifferentAnimations", true, "Update_MTBAnimSwap_RandomChoice")
 
+    -- Misc. Tweaks
+    addConfigCallback_SetFlat("EquipmentGLP.MeleeStealthPlayerBuff_inline1.value", "Misc_Stealth_MeleeMult", 1.3, "Update_Misc_Stealth_MeleeMult")
 end
 
 
