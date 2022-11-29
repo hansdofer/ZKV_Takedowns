@@ -2,7 +2,7 @@
 -- ZKV_Takedowns for CP2077 by Kvalyr
 -- ====================================================================================================================
 
-local version = "0.3.1"
+local version = "0.3.2"
 local modString = "ZKV_Takedowns v" .. version
 local ZKV_Takedowns = {
     version = version,

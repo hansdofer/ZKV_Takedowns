@@ -303,6 +303,14 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
 }
 
 
+public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: ref<GameObject>){
+    // TODO: Can't find the call-chain that ends with GiveReward() from the normal takedown
+    // TODO: This isn't ideal as we could end up double-rewarding Ninjutsu XP for takedowns
+    RPGManager.GiveReward(owner.GetGame(), t"RPGActionRewards.Stealth", Cast<StatsObjectID>(target.GetEntityID()));
+}
+
+
+
 @replaceMethod(LocomotionTakedownEvents)
     protected final func SelectSyncedAnimationAndExecuteAction(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>, owner: ref<GameObject>, target: ref<GameObject>, action: CName) -> Void {
         let effectTag: CName;
@@ -360,6 +368,9 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
                 };
                 // ZKVLog("ETakedownActionType.AerialTakedown - AerialTakedown - effectTag: " + NameToString(effectTag) + " - aerialTakedownWorkspot: " + NameToString(aerialTakedownWorkspot));
                 // Kv: End Changes
+
+                // Fix bug with Aerial Takedowns not granting Ninjutsu XP appropriately
+                ZKV_Takedowns_GiveXP(owner, target);
                 break;
 
             // Kv
@@ -367,9 +378,12 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface: r
             case ETakedownActionType.KillTarget:
                 effectTag = ZKV_Takedowns_LethalityEffectByWeapon(ZKV_GetActiveWeaponType(owner), false);
                 let zkv_workspot: CName = ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface, owner, target, ZKV_GetActiveWeaponType(owner), true);
-                if Equals(effectTag, n"kill"){
+                // if Equals(effectTag, n"kill"){
+                if !(Equals(effectTag, n"setUnconsciousAerialTakedown") || Equals(effectTag, n"setUnconscious")){
                     (target as NPCPuppet).SetMyKiller(owner);
                 }
+                ZKV_Takedowns_GiveXP(owner, target);
+
                 // ZKVLog("ETakedownActionType.KillTarget - effectTag: " + NameToString(effectTag) + " - zkv_workspot: " + NameToString(zkv_workspot));
                 break;
             // Kv End
