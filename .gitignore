@@ -2,6 +2,7 @@
 *.log
 *.zip
 *.png
+*.json
 *.pspimage
 install_log.xml
 Notes.txt

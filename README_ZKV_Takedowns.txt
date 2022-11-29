@@ -29,14 +29,21 @@ A future version will improve on this.
 
 
 :: Future Plans ::
-♦ Configuration UI in-game
 ♦ More animations (Unlikely, as I'm not an animator - but if another mod adds new takedowns or finishers, this mod will automatically support them)
+
+Plans for 0.4.x:
+♦ Reduce control & camera lock-in during finishers & takedowns
+♦ Optionally speed up some finishers that feel too slow in the midst of combat
+
+Plans for ???:
+♦ Re-use heavy attack & defensive attack animations as takedown animations for certain weapons
 
 
 :: Requirements ::
 ♦ Cyberpunk 2077 v1.61
 ♦ Cyber Engine Tweaks (latest version) ( https://www.nexusmods.com/cyberpunk2077/mods/107 )
 ♦ redscript (latest version) ( https://www.nexusmods.com/cyberpunk2077/mods/1511 )
+♦ Native Settings UI (latest version) ( https://www.nexusmods.com/cyberpunk2077/mods/3518 )
 ♦ cybercmd (If using redmod) ( https://www.nexusmods.com/cyberpunk2077/mods/5176 )
 
 
