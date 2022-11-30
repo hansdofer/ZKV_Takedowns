@@ -368,9 +368,6 @@ public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: re
                 };
                 // ZKVLog("ETakedownActionType.AerialTakedown - AerialTakedown - effectTag: " + NameToString(effectTag) + " - aerialTakedownWorkspot: " + NameToString(aerialTakedownWorkspot));
                 // Kv: End Changes
-
-                // Fix bug with Aerial Takedowns not granting Ninjutsu XP appropriately
-                ZKV_Takedowns_GiveXP(owner, target);
                 break;
 
             // Kv
@@ -378,12 +375,9 @@ public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: re
             case ETakedownActionType.KillTarget:
                 effectTag = ZKV_Takedowns_LethalityEffectByWeapon(ZKV_GetActiveWeaponType(owner), false);
                 let zkv_workspot: CName = ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface, owner, target, ZKV_GetActiveWeaponType(owner), true);
-                // if Equals(effectTag, n"kill"){
                 if !(Equals(effectTag, n"setUnconsciousAerialTakedown") || Equals(effectTag, n"setUnconscious")){
                     (target as NPCPuppet).SetMyKiller(owner);
                 }
-                ZKV_Takedowns_GiveXP(owner, target);
-
                 // ZKVLog("ETakedownActionType.KillTarget - effectTag: " + NameToString(effectTag) + " - zkv_workspot: " + NameToString(zkv_workspot));
                 break;
             // Kv End

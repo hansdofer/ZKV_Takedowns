@@ -2,7 +2,7 @@
 -- ZKV_Takedowns for CP2077 by Kvalyr
 -- ====================================================================================================================
 
-local version = "0.3.2"
+local version = "0.3.3"
 local modString = "ZKV_Takedowns v" .. version
 local ZKV_Takedowns = {
     version = version,
@@ -226,13 +226,13 @@ local function SetupMeleeTakedowns()
     TweakDB:SetFlat("Interactions.Kv_MeleeTakedown.action", "Choice2")
     TweakDB:SetFlat("Interactions.Kv_MeleeTakedown.name", "Kv_MeleeTakedown")
 
+
     -- Create new Takedown record and link to new interaction
     TweakDB:CloneRecord("Takedown.Kv_MeleeTakedown", "Takedown.Grapple")
     TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.objectActionUI", "Interactions.Kv_MeleeTakedown")
     TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.actionName", "Kv_MeleeTakedown")
-
-    -- Make takedown prompt only show when a weapon is held
-    -- ZKVTD.configCallbacks.Update_Takedowns_OnlyMelee()
+    -- Mimic the rewards flat of the Takedown.Takedown objectAction Record so that we properly award Ninjutsu XP on takedowns
+    TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.rewards", TweakDB:GetFlat("Takedown.Takedown.rewards"))
 
     local takedownAnims = ZKVTD.config["takedownAnims"]
     if takedownAnims == nil then
