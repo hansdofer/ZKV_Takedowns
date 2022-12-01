@@ -2,7 +2,7 @@
 -- ZKV_Takedowns for CP2077 by Kvalyr
 -- ====================================================================================================================
 
-local version = "0.3.3"
+local version = "0.4.0"
 local modString = "ZKV_Takedowns v" .. version
 local ZKV_Takedowns = {
     version = version,
@@ -11,6 +11,7 @@ local ZKV_Takedowns = {
     descSimple = "Takedowns & Finishers Overhaul",
     nativeSettingsBasePath = "/ZKV",
     configFileName = "config.json",
+    displayName = "ZKVTD - Finisher & Takedown Overhaul",
 }
 local ZKVTD = ZKV_Takedowns
 ZKVTD.debugMode = true
@@ -185,6 +186,9 @@ end
 
 
 local function SetupSettings()
+    ZKVTD.debug("Setupi18n")
+    ZKVTD.doFile("i18n.lua")
+    ZKVTD.doFile("i18n_strings.lua")
     ZKVTD.debug("SetupSettings")
     ZKVTD.doFile("settings.lua")
     ZKVTD:LoadSettings()
@@ -263,8 +267,20 @@ local function SetupMeleeTakedowns()
 end
 
 
+-- GetMod("ZKV_Takedowns").GiveDebugItems()
+function ZKVTD.GiveDebugItems()
+    Game.AddToInventory("Items.Preset_Crowbar_Default", 1);
+    Game.AddToInventory("Items.Preset_Dildo_Stout", 1);
+    Game.AddToInventory("Items.Preset_Baseball_Bat_Default", 1);
+
+    Game.AddToInventory("Items.Preset_Hammer_Default", 1);
+end
+
+
 local function onInit()
     ZKVTD.print("Init")
+
+    ZKVTD.doFile("utils.lua")
 
     ZKVTD.pcall(SetupDefaultConfig)
     ZKVTD.pcall(SetupMeleeTakedowns)
