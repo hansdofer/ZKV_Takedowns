@@ -43,7 +43,7 @@ function ZKVTD_Settings.Load()
     end
 
     -- Fire all the config callbacks - Especially before we init the settings UI so that it starts out in-sync with loaded config
-    -- ZKVTD.Config.InitAllCallbacks()
+    ZKVTD.Config.InitAllCallbacks()
 end
 
 

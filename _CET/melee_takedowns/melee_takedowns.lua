@@ -42,16 +42,16 @@ end
 function MeleeTakedowns:SetAnimStateForWeapon(weaponType, animKey, newState)
     if not self:ValidateWeaponType(weaponType) then return end
     if not self:ValidateAnimKey(animKey) then return end
-    if newState ~= true and newState ~= false then
-        ZKVTD.printError("Invalid new anim state for weapon:", newState)
-        return
-    end
-
+    -- if newState ~= true and newState ~= false then
+    --     ZKVTD.printError("Invalid new anim state for weapon:", newState)
+    --     return
+    -- end
     local animTable = self:GetAnimTableForWeapon(weaponType, true)
-    animTable[animKey] = newState
-
-    -- Store in Config
-    self:SetAnimTableForWeapon(weaponType, animTable)
+    if newState ~= nil then
+        -- Store in Config
+        animTable[animKey] = newState
+        self:SetAnimTableForWeapon(weaponType, animTable)
+    end
 
     -- Update TweakDB with new array
     local tweakDBKey = MeleeTakedowns:GetAnimTableTweakDBKeyByWeapon(weaponType, true)
