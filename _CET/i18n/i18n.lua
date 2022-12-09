@@ -4,13 +4,19 @@
 local ZKVTD = GetMod("ZKV_Takedowns")
 local utils = ZKVTD.utils
 local strlower = string.lower
+local gsub = string.gsub
 
 local i18n = {}
 local englishLangKey = "en-us"
 i18n.locales = {}
 ZKVTD.i18n = i18n
 
+ZKVTD:AddModule("i18n", i18n)
+
 -- ====================================================================================================================
+
+-- If a string starts with this, i18n will be skipped, this string will be stripped and the raw string is returned
+i18n.skipKey = "__SKIPi18n"
 
 
 local function LangTable_GetString(langTable, stringKey)
@@ -56,7 +62,6 @@ function i18n:AddLanguageTable(langKey, langLabelEnglish, langLabelLocalized)
 end
 
 function i18n:GetLanguageTable(langKey)
-    ZKVTD.debug("GetLanguageTable()", langKey)
     if langKey == "enGB" or langKey == "enUS" or langKey == "enIE" then
         langKey = englishLangKey
     end
@@ -65,7 +70,6 @@ function i18n:GetLanguageTable(langKey)
 end
 
 function i18n:AddString(langKey, stringKey, stringValue)
-    ZKVTD.debug("AddString()", langKey)
     local localeTable = self:GetLanguageTable(langKey)
     localeTable:AddString(stringKey, stringValue, false)
 end
@@ -90,6 +94,14 @@ function i18n:GetStringForLang(langKey, stringKey, default, allowEnglishFallback
 end
 
 function i18n:GetString(stringKey, default, allowEnglishFallback, allowEmpty)
+
+    if utils.Str_starts_with(stringKey, i18n.skipKey) then
+        local tempStr = gsub(stringKey, i18n.skipKey, "")
+        tempStr = gsub(tempStr, ".label", "")
+        tempStr = gsub(tempStr, ".tooltip", "")
+        return tempStr
+    end
+
     local langKey = i18n:GetCurrentLanguageKey()
     return i18n:GetStringForLang(langKey, stringKey, default, allowEnglishFallback, allowEmpty)
 end
@@ -101,9 +113,15 @@ end
 -- GetMod("ZKV_Takedowns").i18n:GetCurrentLanguageKey()
 function i18n:GetCurrentLanguageKey()
     local locCode = Game.GetSettingsSystem():GetGroup("/language"):GetVar("OnScreen"):GetValue().value
-    ZKVTD.debug("Game locCode:", locCode)
+    -- ZKVTD.debug("Game locCode:", locCode)
     return locCode or "en-us"
 end
+
+
+function i18n:NoTranslateString(str)
+    return i18n.skipKey .. str
+end
+
 
 -- GetMod("ZKV_Takedowns").i18n:DumpStrings()
 function i18n:DumpStrings()
@@ -116,24 +134,26 @@ end
 
 -- ====================================================================================================================
 
--- CP2077 official text languages
--- TODO: Remaining localized labels
-i18n:AddLanguageTable("en-us", "English", "English")
+function i18n:Init()
+    -- CP2077 official text languages
+    -- TODO: Remaining localized labels
+    self:AddLanguageTable("en-us", "English", "English")
 
-i18n:AddLanguageTable("ar-ar", "Arabic", "العربية")
-i18n:AddLanguageTable("cz-cz", "Czech", "Čeština")
-i18n:AddLanguageTable("de-de", "German", "Deutsch")
-i18n:AddLanguageTable("es-es", "Spanish", "Español")
-i18n:AddLanguageTable("es-mx", "Latin America Spanish", "Español de Latinoamérica")
-i18n:AddLanguageTable("fr-fr", "French", "Français")
-i18n:AddLanguageTable("hu-hu", "Hungarian", "Magyar")
-i18n:AddLanguageTable("it-it", "Italian", "Italiano")
-i18n:AddLanguageTable("jp-jp", "Japanese", "日本語")
-i18n:AddLanguageTable("kr-kr", "Korean", "한국인")
-i18n:AddLanguageTable("pl-pl", "Polish", "Polski")
-i18n:AddLanguageTable("pt-br", "Brazilian Portuguese", "Português brasileiro")
-i18n:AddLanguageTable("ru-ru", "Russian", "Русский")
-i18n:AddLanguageTable("th-th", "Thai", "ชาวไทย")
-i18n:AddLanguageTable("tr-tr", "Turkish", "Türkçe")
-i18n:AddLanguageTable("zh-cn", "Chinese (PRC)", nil)
-i18n:AddLanguageTable("zh-tw", "Chinese (Taiwan)", nil)
+    self:AddLanguageTable("ar-ar", "Arabic", "العربية")
+    self:AddLanguageTable("cz-cz", "Czech", "Čeština")
+    self:AddLanguageTable("de-de", "German", "Deutsch")
+    self:AddLanguageTable("es-es", "Spanish", "Español")
+    self:AddLanguageTable("es-mx", "Latin America Spanish", "Español de Latinoamérica")
+    self:AddLanguageTable("fr-fr", "French", "Français")
+    self:AddLanguageTable("hu-hu", "Hungarian", "Magyar")
+    self:AddLanguageTable("it-it", "Italian", "Italiano")
+    self:AddLanguageTable("jp-jp", "Japanese", "日本語")
+    self:AddLanguageTable("kr-kr", "Korean", "한국인")
+    self:AddLanguageTable("pl-pl", "Polish", "Polski")
+    self:AddLanguageTable("pt-br", "Brazilian Portuguese", "Português brasileiro")
+    self:AddLanguageTable("ru-ru", "Russian", "Русский")
+    self:AddLanguageTable("th-th", "Thai", "ชาวไทย")
+    self:AddLanguageTable("tr-tr", "Turkish", "Türkçe")
+    self:AddLanguageTable("zh-cn", "Chinese (PRC)", nil)
+    self:AddLanguageTable("zh-tw", "Chinese (Taiwan)", nil)
+end

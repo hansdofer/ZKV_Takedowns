@@ -17,281 +17,76 @@ local ZKVTD = ZKV_Takedowns
 ZKVTD.debugMode = true
 ZKVTD.version = version
 ZKVTD.modString = modString
-ZKVTD.print = function(...) print(modString, ": ", ...) end
-ZKVTD.printError = function(...) print(modString, ":ERROR: ", ...) end
-ZKVTD.debug = function(...)
-    -- TODO: Move to shared utils
-    if not ZKVTD.debugMode then return end
-    print(modString, ": ", ...)
-end
-
-function ZKVTD:GetNativeSettingsMod()
-    -- TODO: Move to shared utils
-    local nativeSettings = GetMod("nativeSettings")
-    if not nativeSettings then
-        self.print("Warning: Native Settings UI is not installed. Please install this dependency if you want to configure " .. self.descSimple)
-        return
-    end
-
-    if not nativeSettings.pathExists(self.nativeSettingsBasePath) then
-        nativeSettings.addTab(self.nativeSettingsBasePath, "Kvalyr Mods")
-    end
-
-    return nativeSettings
-end
-
-function ZKVTD.pcall(func, ...)
-    -- TODO: Move to shared utils
-    local status_ok, retVal = pcall(func, ...)
-    if status_ok then
-        return status_ok, retVal
-    else
-        ZKVTD.printError("Problem executing func - retVal: ", "'" .. tostring(retVal) .. "'")
-    end
-end
-
-function ZKVTD.assert(testVal, msg)
-    -- TODO: Move to shared utils
-    if not testVal then
-        ZKVTD.print("[Fatal error]: '" .. tostring(msg) .. "'")
-        assert(testVal, msg)
-    end
-end
-
-function ZKVTD.doFile(filePath)
-    -- TODO: Move to shared utils
-    ZKVTD.debug("doFile: Executing Lua file: " .. filePath)
-    local status_ok, retVal = pcall(dofile, filePath)
-    if status_ok then
-        ZKVTD.debug("doFile: Finished executing file: " .. filePath)
-    else
-        ZKVTD.printError("doFile: Problem executing file: " .. filePath)
-        ZKVTD.printError("doFile: '" .. tostring(retVal) .. "'")
-    end
-    ZKVTD.assert(status_ok, tostring(retVal))
-end
+local utils = assert(loadfile("utils.lua"))(ZKVTD)
+utils.ImportUtilMethods()
 
 -- ====================================================================================================================
 
-function ZKVTD.GetConfigValue(key, default)
-    local value = ZKVTD.config[key]
-    if value == nil then
-        return default
-    end
-    return value
+
+local function SetupLocalization()
+    ZKVTD.debug("SetupLocalization")
+
+    ZKVTD:InitModule("i18n")
+    ZKVTD:InitModule("i18n_strings")
 end
 
-function ZKVTD.SetConfigValue(key, value, noSave)
-    ZKVTD.config[key] = value
-    if not noSave then
-        ZKVTD:SaveSettings() -- TODO: Do we really want to call this on each value update? Probably not..
-    end
+local function SetupConfig()
+    ZKVTD.debug("SetupConfig")
+
+    ZKVTD:InitModule("ConfigDefaults")
 end
-function ZKVTD.SetDefaultConfigValue(key, value) ZKVTD.SetConfigValue(key, value, true) end
-
-local function dumpConfig()
-    if not ZKVTD.debugMode then return end
-
-    for key, value in pairs(ZKVTD.config) do
-        if type(value) == "table" then
-            ZKVTD.debug("Config: ", key, ": ", #value, "(table)")
-        else
-            ZKVTD.debug("Config: ", key, ": ", value)
-        end
-    end
-end
-
-function ZKVTD.GetConfigCallback(callbackKey)
-    local callbackFunc = ZKVTD.configCallbacks[callbackKey]
-    if not callbackFunc then
-        ZKVTD.debug("Warning: Failed to retrieve config callback:", callbackKey)
-        return function() end
-    end
-    return callbackFunc
-end
-function ZKVTD.CallConfigCallback(callbackKey)
-    local func = ZKVTD.GetConfigCallback(callbackKey)
-    local funcType = type(func)
-    if funcType == "function" then
-        return func()
-    else
-        ZKVTD.print("Error: Invalid type (" .. funcType .. ") for config callback:", callbackKey)
-    end
-end
-
-local function addConfigCallback_ByKey(callbackKey, callbackFunc)
-    local existing = ZKVTD.configCallbacks[callbackKey]
-    if existing then
-        ZKVTD.print("Error: Config callback already exists at key:", callbackKey)
-    else
-        ZKVTD.configCallbacks[callbackKey] = callbackFunc
-        ZKVTD.debug("Added config callback at key:", callbackKey)
-    end
-end
-
-local function addConfigCallback_SetFlat(flatKey, configKey, default, callbackKey, multiplier)
-    if default == nil then default = true end
-
-    local function callbackFunc(newValue)
-        if newValue == nil then
-            newValue = ZKVTD.GetConfigValue(configKey, default)
-        else
-            ZKVTD.SetConfigValue(configKey, newValue)
-        end
-        local success = TweakDB:SetFlat(flatKey, newValue)
-        ZKVTD.debug("-Config Callback-", flatKey, "newValue:", newValue, "SetFlat success:", success)
-        if not success then
-            ZKVTD.printError("Failed to SetFlat:", "'"..flatKey.."'", newValue)
-        end
-
-        dumpConfig()
-    end
-
-    if not callbackKey or callbackKey == "" then
-        callbackKey = "SetFlat_" .. flatKey
-    end
-
-    addConfigCallback_ByKey(callbackKey, callbackFunc)
-end
-
-function ZKVTD.InitAllCallbacks()
-    for _, callbackFunc in pairs(ZKVTD.configCallbacks) do
-        callbackFunc()
-    end
-end
-
-local function Update_Takedowns_OnlyMelee(newValue)
-    -- Make takedown prompt only show when a weapon is held
-    local instigatorPrereqs = TweakDB:GetFlat("Takedown.Grapple.instigatorPrereqs") -- Use grapple's prereqs as our basis
-    local configKey = "Takedowns_OnlyWithMeleeWeaponHeld"
-    if newValue == nil then
-        newValue = ZKVTD.GetConfigValue(configKey, true)
-    end
-
-    ZKVTD.SetConfigValue(configKey, newValue)
-    if newValue == true then
-        table.insert(instigatorPrereqs, "Prereqs.MeleeWeaponHeldPrereq")
-    end
-
-    local flatKey = "Takedown.Kv_MeleeTakedown.instigatorPrereqs"
-    local success = TweakDB:SetFlat(flatKey, instigatorPrereqs)
-    ZKVTD.debug("-Config Callback-", flatKey, "newValue:", newValue, "SetFlat success:", success)
-    if not success then
-        ZKVTD.printError("Failed to SetFlat:", "'"..flatKey.."'", newValue)
-    end
-end
-
-
--- ====================================================================================================================
-
 
 local function SetupSettings()
-    ZKVTD.debug("Setupi18n")
-    ZKVTD.doFile("i18n.lua")
-    ZKVTD.doFile("i18n_strings.lua")
     ZKVTD.debug("SetupSettings")
-    ZKVTD.doFile("settings.lua")
-    ZKVTD:LoadSettings()
-    ZKVTD.doFile("settingsUI.lua")
+
+    ZKVTD:InitModule("SettingsUI")
+    ZKVTD:InitModule("Settings")
 end
-
-local function SetupDefaultConfig()
-    ZKVTD.debug("SetupDefaultConfig")
-    ZKVTD.config = {}
-    ZKVTD.configCallbacks = {}
-
-    ZKVTD.doFile("config_defaults.lua")
-    ZKVTD.doFile("config_takedown_animations.lua")
-
-    dumpConfig()
-
-    -- TODO: Move these callback setups
-    -- Takedowns
-    addConfigCallback_ByKey("Update_Takedowns_OnlyMelee", Update_Takedowns_OnlyMelee)
-    addConfigCallback_SetFlat("ZKVTD.Takedowns.nonLethalBlunt", "Takedowns_NonLethalBlunt", true, "Update_Takedowns_NonLethalBlunt")
-
-    -- MTB AnimSwap
-    addConfigCallback_SetFlat("ZKVTD.MantisBladesAnimSwap.UseAerial", "MantisSwap_Finishers_UseAerialTakedownAnimation", true, "Update_MTBAnimSwap_UseAerial")
-    addConfigCallback_SetFlat("ZKVTD.MantisBladesAnimSwap.RandomChoice", "MantisSwap_Finishers_MixDifferentAnimations", true, "Update_MTBAnimSwap_RandomChoice")
-
-    -- Misc. Tweaks
-    addConfigCallback_SetFlat("EquipmentGLP.MeleeStealthPlayerBuff_inline1.value", "Misc_Stealth_MeleeMult", 1.3, "Update_Misc_Stealth_MeleeMult")
-end
-
 
 local function SetupMeleeTakedowns()
     ZKVTD.debug("SetupMeleeTakedowns")
-    if not ZKVTD.GetConfigValue("takedownAnims_defaultsLoaded", false) then
-        ZKVTD.printError("Cannot initialize melee takedowns without loading default config first.")
-        return
-    end
-    -- Set up new interaction at same interaction layer as Grapple, using Choice2 (Grapple uses Choice1)
-    TweakDB:CloneRecord("Interactions.Kv_MeleeTakedown", "Interactions.Takedown")
-    TweakDB:SetFlat("Interactions.Kv_MeleeTakedown.action", "Choice2")
-    TweakDB:SetFlat("Interactions.Kv_MeleeTakedown.name", "Kv_MeleeTakedown")
 
+    -- ZKVTD.doFile("melee_takedowns/config_takedown_animations.lua")  -- Old setup
 
-    -- Create new Takedown record and link to new interaction
-    TweakDB:CloneRecord("Takedown.Kv_MeleeTakedown", "Takedown.Grapple")
-    TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.objectActionUI", "Interactions.Kv_MeleeTakedown")
-    TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.actionName", "Kv_MeleeTakedown")
-    -- Mimic the rewards flat of the Takedown.Takedown objectAction Record so that we properly award Ninjutsu XP on takedowns
-    TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.rewards", TweakDB:GetFlat("Takedown.Takedown.rewards"))
-
-    local takedownAnims = ZKVTD.config["takedownAnims"]
-    if takedownAnims == nil then
-        ZKVTD.print("ERROR: nil takedownAnims table!")
-        takedownAnims = {}
-    end
-
-    for weapon_key, animTable in pairs(takedownAnims) do
-        local takedownsCount = #animTable
-        ZKVTD.debug("ZKVTD ===================================== ")
-        ZKVTD.debug("ZKVTD", weapon_key, takedownsCount)
-
-        local takedownsCountFlatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".count"
-        TweakDB:SetFlat(takedownsCountFlatKey, tostring(takedownsCount))
-
-        for idx_key, anim in ipairs(animTable) do
-            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. idx_key-1
-            TweakDB:SetFlat(flatKey, anim)
-        end
-        ZKVTD.print("ZKVTD", weapon_key, takedownsCount)
-        -- e.g.;
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana0
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana1
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana2
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana.count -> "3"
-    end
-
-end
-
-
--- GetMod("ZKV_Takedowns").GiveDebugItems()
-function ZKVTD.GiveDebugItems()
-    Game.AddToInventory("Items.Preset_Crowbar_Default", 1);
-    Game.AddToInventory("Items.Preset_Dildo_Stout", 1);
-    Game.AddToInventory("Items.Preset_Baseball_Bat_Default", 1);
-
-    Game.AddToInventory("Items.Preset_Hammer_Default", 1);
+    ZKVTD:InitModule("MeleeTakedowns_Constants")
+    ZKVTD:InitModule("MeleeTakedowns")
 end
 
 
 local function onInit()
-    ZKVTD.print("Init")
+    ZKVTD.debug("onInit")
+    utils.doFile("constants.lua")
 
-    ZKVTD.doFile("utils.lua")
+    utils.doFile("i18n/i18n.lua")
+    utils.doFile("i18n/i18n_strings.lua")
 
-    ZKVTD.pcall(SetupDefaultConfig)
-    ZKVTD.pcall(SetupMeleeTakedowns)
-    -- ZKVTD.pcall(SetupControlUnlocks)
+    utils.doFile("settings/mem_config.lua")
+    utils.doFile("settings/config_defaults.lua")
+    utils.doFile("settings/settingsUI_api.lua")
+    utils.doFile("settings/settings.lua")
 
-    ZKVTD.pcall(SetupSettings)
-    ZKVTD.print("Fully Loaded!")
+    -- ZKVTD.doFile("melee_takedowns/config_takedown_animations.lua")  -- Old setup
+    ZKVTD.doFile("melee_takedowns/melee_takedowns.lua")
+    ZKVTD.doFile("melee_takedowns/constants.lua")
+
+    utils.pcall(SetupConfig)
+    utils.pcall(SetupLocalization)
+
+    utils.pcall(SetupMeleeTakedowns)
+    -- utils.doFile("experimental/speedups.lua")
+    -- utils.doFile("experimental/control_unlocks.lua")
+
+    utils.pcall(SetupSettings)
+
+    utils.doFile("debug/debug.lua", true)
+
+    ZKVTD.print("Finished Loading!")
 end
+
 
 function ZKVTD:New()
     registerForEvent("onInit", onInit)
+
     return ZKVTD
 end
 

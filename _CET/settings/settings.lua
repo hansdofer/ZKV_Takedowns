@@ -9,17 +9,18 @@ local utils = ZKVTD.utils
 
 local ZKVTD_Settings = {}
 ZKVTD.Settings = ZKVTD_Settings
+ZKVTD.Modules["Settings"] = ZKVTD_Settings
 
 -- ====================================================================================================================
--- TODO: Logic to ensure Settings UI state, file state and ZKVTD.config state are all in-sync
+-- TODO: Logic to ensure Settings UI state, file state and ZKVTD.configTable state are all in-sync
 
 local function ConfigToJson()
-    return json.encode(ZKVTD.config)
+    return json.encode(ZKVTD.configTable)
 end
 
 
 function ZKVTD_Settings.Load()
-    ZKVTD.debug("LoadSettings()")
+    -- ZKVTD.debug("LoadSettings()")
     local file = io.open(ZKVTD.configFileName, 'r')
     if file == nil then
         ZKVTD.printError("Failed to open '" .. ZKVTD.configFileName .. "'")
@@ -27,7 +28,7 @@ function ZKVTD_Settings.Load()
     end
 
     local rawContents = file:read("*a")
-    local validJSON, decodedSettingsTable = ZKVTD.pcall(function() return json.decode(rawContents) end)
+    local validJSON, decodedSettingsTable = ZKVTD.utils.pcall(function() return json.decode(rawContents) end)
     file:close()
 
     if not validJSON or decodedSettingsTable == nil then
@@ -35,19 +36,19 @@ function ZKVTD_Settings.Load()
         return
     end
 
-    for key, _ in pairs(ZKVTD.config) do
+    for key, _ in pairs(ZKVTD.configTable) do
         if decodedSettingsTable[key] ~= nil then
-            ZKVTD.SetConfigValue(key, decodedSettingsTable[key])
+            ZKVTD.Config.SetValue(key, decodedSettingsTable[key])
         end
     end
 
     -- Fire all the config callbacks - Especially before we init the settings UI so that it starts out in-sync with loaded config
-    ZKVTD.InitAllCallbacks()
+    -- ZKVTD.Config.InitAllCallbacks()
 end
 
 
 function ZKVTD_Settings.Save()
-    ZKVTD.debug("SaveSettings()")
+    -- ZKVTD.debug("SaveSettings()")
     local validJSON, encodedJSONStr = pcall(ConfigToJson)
 
     if validJSON and encodedJSONStr ~= nil then
@@ -62,10 +63,13 @@ function ZKVTD:SaveSettings() return ZKVTD_Settings.Save() end
 
 -- ====================================================================================================================
 
-function ZKVTD_Settings.UnpackWidgetParams(widgetType, paramsTable, configKey)
+function ZKVTD_Settings.UnpackWidgetParams(widgetType, paramsTable, configKey, initOverride)
     widgetType = string.lower(widgetType)
-    local widgetInitValue = paramsTable["initValue"]
-    local widgetDefaultValue = ZKVTD.GetConfigValue(configKey)
+    local widgetInitValue = initOverride
+    if initOverride == nil then
+        widgetInitValue = ZKVTD.Config.GetValue(configKey)
+    end
+    local widgetDefaultValue = paramsTable["default"]
     if widgetType == "switch" then
         return widgetInitValue, widgetDefaultValue
     elseif widgetType == "sliderint" then
@@ -91,15 +95,13 @@ function ZKVTD_Settings:AddCategory(subCategoryPath, subCategoryLabelKey)
 end
 
 
-function ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configKey, widgetType, widgetParamsTable, callbackKey)
+function ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configKey, widgetType, widgetParamsTable, callbackKey, initOverride)
     -- TODO: Add setting to config here or elsewhere?
     -- TODO: Set up callback here or elsewhere?
-    local callbackFunc = ZKVTD.GetConfigCallback(callbackKey)
-
-    -- local widgetLabel, widgetTooltip = ZKVTD_Settings.UnpackTextFields(textFieldsTable)
+    local callbackFunc = ZKVTD.Config.GetCallback(callbackKey)
 
     if widgetType == "switch" then
-        local widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey)
+        local widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey, initOverride)
         ZKVTD.SettingsUI.AddWidgetToSubCategory_Switch(
             settingCategory,
             widgeti18nStringKey,
@@ -108,7 +110,7 @@ function ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configK
             callbackFunc
         )
     elseif widgetType == "sliderint" then
-        local sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey)
+        local sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey, initOverride)
         ZKVTD.SettingsUI.AddWidgetToSubCategory_SliderInt(
             settingCategory,
             widgeti18nStringKey,
@@ -120,7 +122,7 @@ function ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configK
             callbackFunc
         )
     elseif widgetType == "sliderfloat" then
-        local sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey)
+        local sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue = ZKVTD_Settings.UnpackWidgetParams(widgetType, widgetParamsTable, configKey, initOverride)
         ZKVTD.SettingsUI.AddWidgetToSubCategory_SliderFloat(
             settingCategory,
             widgeti18nStringKey,
@@ -136,68 +138,89 @@ function ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configK
 end
 
 -- ====================================================================================================================
--- DEBUG
-
 
 -- GetMod("ZKV_Takedowns").Settings:Debug()
-local function init()
+function ZKVTD_Settings:Init()
+    self.Load()
+
     local modPathPrefix = "zkvtd_"
 
     local subcategories = {
         "takedowns",
         "mtb_animswap",
         "misc_tweaks",
+        "takedowns_byweapon",
     }
 
     for _, key in pairs(subcategories) do
         ZKVTD.SettingsUI.AddSubCategory(modPathPrefix .. key, "zkvtd_settings.category." .. key, ZKVTD.displayName)
     end
 
-    -- ZKVTD_Settings:AddSetting(settingCategory, widgeti18nStringKey, configKey, widgetType, widgetParamsTable, callbackKey)
-    ZKVTD_Settings:AddSetting(
+    self:AddSetting(
         modPathPrefix .. "takedowns",
         "zkvtd_settings.Takedowns.OnlyMelee",
         "Takedowns_OnlyWithMeleeWeaponHeld",
         "switch",
-        {initValue = true},
+        {default = true},
         "Update_Takedowns_OnlyMelee"
     )
-    ZKVTD_Settings:AddSetting(
+    self:AddSetting(
         modPathPrefix .. "takedowns",
         "zkvtd_settings.Takedowns.NonLethalBlunt",
         "Takedowns_NonLethalBlunt",
         "switch",
-        {initValue = true},
+        {default = true},
         "Update_Takedowns_NonLethalBlunt"
     )
 
-    ZKVTD_Settings:AddSetting(
+    self:AddSetting(
         modPathPrefix .. "mtb_animswap",
         "zkvtd_settings.MTBAnimSwap.UseAerial",
         "MantisSwap_Finishers_UseAerialTakedownAnimation",
         "switch",
-        {initValue = true},
+        {default = true},
         "Update_MTBAnimSwap_UseAerial"
     )
-    ZKVTD_Settings:AddSetting(
+    self:AddSetting(
         modPathPrefix .. "mtb_animswap",
         "zkvtd_settings.MTBAnimSwap.RandomChoice",
         "MantisSwap_Finishers_MixDifferentAnimations",
         "switch",
-        {initValue = true},
+        {default = true},
         "Update_MTBAnimSwap_RandomChoice"
     )
 
-    ZKVTD_Settings:AddSetting(
+    self:AddSetting(
         modPathPrefix .. "misc_tweaks",
         "zkvtd_settings.Misc_Stealth.MeleeMult",
         "Misc_Stealth_MeleeMult",
-        "switch",
-        {initValue = true, sliderMin = 1.0, sliderMax = 10, sliderStep = 0.05, sliderFormat = "%.2f"},
+        "sliderfloat",
+        {default = 1.30, sliderMin = 1.0, sliderMax = 10, sliderStep = 0.05, sliderFormat = "%.2f"},
         "Update_Misc_Stealth_MeleeMult"
     )
-end
 
-init()
+    local MeleeTakedowns = ZKVTD:GetModule("MeleeTakedowns")
+
+    for _, weaponType in pairs(ZKVTD.constants.weaponTypes) do
+        local subCatKey = modPathPrefix .. "takedowns_byweapon_" .. weaponType
+        ZKVTD.SettingsUI.AddSubCategory(subCatKey, weaponType, "ZKVTD - " .. i18n:GetString("Animations"))
+        local anims = MeleeTakedowns.constants.allowedAnimsByWeapon[weaponType]
+        for _, animKey in pairs(anims) do
+            local callbackKey = MeleeTakedowns:GetCallbackKeyByWeaponAnim(weaponType, animKey, false)
+            local initOverride = MeleeTakedowns:GetAnimStateForWeapon(weaponType, animKey)
+
+            self:AddSetting(
+                subCatKey,
+                animKey,
+                nil,
+                "switch",
+                {default = false},
+                callbackKey,
+                initOverride
+            )
+        end
+    end
+
+end
 
 -- ====================================================================================================================

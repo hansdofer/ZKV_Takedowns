@@ -11,35 +11,12 @@ local utils = {}
 ZKVMOD.utils = utils
 
 -- ====================================================================================================================
--- Modules
-
-print("derp 1")
-
-ZKVMOD.Modules = {}
-function utils.InitModule(mod, moduleKey)
-    local module = mod.Modules[moduleKey]
-    if not module then utils.printError("Invalid module:", moduleKey) end
-    local initFunc = module.init or module.Init
-    local status_ok, retVal = utils.pcall(initFunc, module)
-    if not status_ok then
-        utils.printError("Problem initializing module:", moduleKey, retVal)
-    end
-end
-function utils.AddModule(mod, moduleKey, moduleTable)
-    mod.Modules[moduleKey] = moduleTable
-end
-function utils.GetModule(mod, moduleKey)
-    return mod.Modules[moduleKey]
-end
-
--- ====================================================================================================================
 -- Output
 utils.print = function(...) print(ZKVMOD.modString, ": ", ...) end
-utils.printWarning = function(...) print(ZKVMOD.modString, ":WARN:", ...) end
-utils.printError = function(...) print(ZKVMOD.modString, ":ERROR:", ...) end
+utils.printError = function(...) print(ZKVMOD.modString, ":ERROR: ", ...) end
 utils.debug = function(...)
     if not ZKVMOD.debugMode then return end
-    print(ZKVMOD.modString, ":DEBUG:", ...)
+    print(ZKVMOD.modString, ": ", ...)
 end
 
 function utils.ImportUtilMethods(mod)
@@ -50,10 +27,6 @@ function utils.ImportUtilMethods(mod)
     mod.pcall = utils.pcall
     mod.assert = utils.assert
     mod.doFile = utils.doFile
-
-    mod.InitModule = utils.InitModule
-    mod.AddModule = utils.AddModule
-    mod.GetModule = utils.GetModule
 end
 
 -- TODO: Namespace the utils better?
@@ -77,10 +50,11 @@ end
 
 function utils.pcall(func, ...)
     local status_ok, retVal = pcall(func, ...)
-    if not status_ok then
-        utils.printError("Problem executing func: ", "'" .. tostring(retVal) .. "'")
+    if status_ok then
+        return status_ok, retVal
+    else
+        utils.printError("Problem executing func - retVal: ", "'" .. tostring(retVal) .. "'")
     end
-    return status_ok, retVal
 end
 
 function utils.assert(testVal, msg)
@@ -105,7 +79,6 @@ function utils.doFile(filePath, silent)
     end
     utils.assert(status_ok, tostring(retVal))
 end
-
 
 -- ====================================================================================================================
 -- Strings
@@ -202,21 +175,11 @@ local flatArrayMax = 1000 -- Arbitrary max to catch inf. loops and runaways
 
 function utils.TweakDB_CreateArrayOfFlats(tab, flatKey, doIPairs)
     local count = utils.Table_Size(tab)
-    if not count or count < 1 then
-        utils.printWarning("utils.TweakDB_CreateArrayOfFlats -- invalid count or empty table:", count, "flatKey:", flatKey)
-    end
     if count > flatArrayMax then
         utils.printError("utils.TweakDB_CreateArrayOfFlats() - Excessive table size for insertion to TweakDB:", flatKey, count)
         return
     end
-    local setCountSuccess = TweakDB:SetFlat(flatKey .. ".count", tostring(count))
-    if not setCountSuccess then
-        utils.printError(
-            "utils.TweakDB_CreateArrayOfFlats() - Aborting: Failed to set count (" .. (count or "nil") .. ") flat for flatKey:", flatKey
-        )
-        return
-    end
-
+    TweakDB:SetFlat(flatKey .. ".count", count)
     local successCount = 0
     if doIPairs then
         for idx, val in ipairs(tab) do
