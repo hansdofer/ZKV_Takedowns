@@ -215,7 +215,7 @@ public final static func ZKV_Takedowns_GetEnabledAnimCountForWeapon(weaponType: 
     let countStr: String = TweakDBInterface.GetString(TDBID.Create(countKey), s"0");
     let count: Int32 = StringToInt(countStr);
 
-    // ZKVTD.MeleeTakedowns:AnimStates:Wea_Knife
+    // .MeleeTakedowns:AnimStates:Wea_Knife
 
     ZKVLog(s"ZKV_Takedowns_GetEnabledAnimCountForWeapon - weaponType: " + ToString(weaponType) + " - statedCount: " + count + " - prefix: " + prefix);
 
@@ -238,7 +238,7 @@ public final static func ZKV_Takedowns_GetAvailableAnimsForWeapon(weaponType: ga
     let count: Int32 = StringToInt(countStr);
 
     i = 0;
-    while i < count {
+    while i <= count {
         animKey = TDBID.Create(prefix + s":" + ToString(i));
         animString = TweakDBInterface.GetString(animKey, s"");
         if NotEquals(animString, ""){
@@ -290,7 +290,7 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
     while i < ArraySize(availableAnimsArray) {
         animString = availableAnimsArray[i];
         animStateKey = TDBID.Create(prefix + s":" + animString);
-        animState = TweakDBInterface.GetBool(animStateKey, true);
+        animState = TweakDBInterface.GetBool(animStateKey, false);
         ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - Checking state for:" + prefix + s":" + animString);
         ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - State:" + animState);
         // animString = TweakDBInterface.GetString(animKey, s"");
