@@ -27,15 +27,17 @@ end
 
 -- ====================================================================================================================
 
-local function GetSubcategoryFullPath(subCategoryPath)
+local function GetSubcategoryFullPath( subCategoryPath )
     return ZKVTD.nativeSettingsBasePath .. "/" .. subCategoryPath
 end
 
-function SettingsUI.AddSubCategory(subCategoryPath, subCategoryLabelKey, labelPrefix, optionalIndex)
-    if not SettingsUI.canDoSettingsUI then return end
+function SettingsUI.AddSubCategory( subCategoryPath, subCategoryLabelKey, labelPrefix, optionalIndex )
+    if not SettingsUI.canDoSettingsUI then
+        return
+    end
     local subCategoryLabel = i18n:GetString(subCategoryLabelKey, "<missing_category_label>")
     if labelPrefix and labelPrefix ~= "" then
-        subCategoryLabel = labelPrefix ..  " - " .. subCategoryLabel
+        subCategoryLabel = labelPrefix .. " - " .. subCategoryLabel
     end
 
     local path = GetSubcategoryFullPath(subCategoryPath)
@@ -43,7 +45,7 @@ function SettingsUI.AddSubCategory(subCategoryPath, subCategoryLabelKey, labelPr
     SettingsUI.nativeSettings.addSubcategory(path, subCategoryLabel, optionalIndex)
 end
 
-local function GetLocalizedStrings(widgeti18StringKey)
+local function GetLocalizedStrings( widgeti18StringKey )
     local widgetLabelKey = widgeti18StringKey .. ".label"
     local widgetTooltipKey = widgeti18StringKey .. ".tooltip"
     local widgetLabel = i18n:GetString(widgetLabelKey, "<missing_label>")
@@ -51,35 +53,64 @@ local function GetLocalizedStrings(widgeti18StringKey)
     return widgetLabel, widgetTooltip
 end
 
-function SettingsUI.AddWidgetToSubCategory_Switch(subCategory, widgeti18nStringKey, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex)
-    if not SettingsUI.canDoSettingsUI then return end
+function SettingsUI.AddWidgetToSubCategory_Switch(
+    subCategory, widgeti18nStringKey, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex
+ )
+    if not SettingsUI.canDoSettingsUI then
+        return
+    end
     local widgetLabel, widgetTooltip = GetLocalizedStrings(widgeti18nStringKey)
 
     local fullPath = GetSubcategoryFullPath(subCategory)
     return SettingsUI.nativeSettings.addSwitch(fullPath, widgetLabel, widgetTooltip, widgetInitValue, widgetDefaultValue, widgetUpdateCallback)
 end
 
-function SettingsUI.AddWidgetToSubCategory_SliderInt(subCategory, widgeti18nStringKey, sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex)
-    if not SettingsUI.canDoSettingsUI then return end
+function SettingsUI.AddWidgetToSubCategory_SliderInt(
+    subCategory, widgeti18nStringKey, sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex
+ )
+    if not SettingsUI.canDoSettingsUI then
+        return
+    end
     local widgetLabel, widgetTooltip = GetLocalizedStrings(widgeti18nStringKey)
     local fullPath = GetSubcategoryFullPath(subCategory)
-    return SettingsUI.nativeSettings.addRangeInt(fullPath, widgetLabel, widgetTooltip, sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue, widgetUpdateCallback)
+    return SettingsUI.nativeSettings.addRangeInt(
+        fullPath, widgetLabel, widgetTooltip, sliderMin, sliderMax, sliderStep, widgetInitValue, widgetDefaultValue, widgetUpdateCallback
+    )
 end
 
-function SettingsUI.AddWidgetToSubCategory_SliderFloat(subCategory, widgeti18nStringKey, sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex)
-    if not SettingsUI.canDoSettingsUI then return end
+function SettingsUI.AddWidgetToSubCategory_SliderFloat(
+    subCategory,
+    widgeti18nStringKey,
+    sliderMin,
+    sliderMax,
+    sliderStep,
+    sliderFormat,
+    widgetInitValue,
+    widgetDefaultValue,
+    widgetUpdateCallback,
+    optionalIndex
+ )
+    if not SettingsUI.canDoSettingsUI then
+        return
+    end
     local widgetLabel, widgetTooltip = GetLocalizedStrings(widgeti18nStringKey)
     local fullPath = GetSubcategoryFullPath(subCategory)
-    if not sliderFormat then sliderFormat = "%.2f" end
+    if not sliderFormat then
+        sliderFormat = "%.2f"
+    end
 
-    ZKVTD.debug("AddWidgetToSubCategory_SliderFloat", subCategory, widgeti18nStringKey, sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue, widgetUpdateCallback, optionalIndex)
-    return SettingsUI.nativeSettings.addRangeFloat(fullPath, widgetLabel, widgetTooltip, sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue, widgetUpdateCallback)
+    ZKVTD.debug(
+        "AddWidgetToSubCategory_SliderFloat", subCategory, widgeti18nStringKey, sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue,
+            widgetDefaultValue, widgetUpdateCallback, optionalIndex
+    )
+    return SettingsUI.nativeSettings.addRangeFloat(
+        fullPath, widgetLabel, widgetTooltip, sliderMin, sliderMax, sliderStep, sliderFormat, widgetInitValue, widgetDefaultValue,
+            widgetUpdateCallback
+    )
 end
 
 -- ====================================================================================================================
 -- local modPathPrefix = "zkvtd_"
-
-
 
 -- local function AddSubCategory_Takedowns()
 --     local subCategoryPath = modPathPrefix .. "takedowns"
@@ -153,6 +184,5 @@ end
 --     -- AddSubCategory_MTBAnimSwap()
 --     -- AddSubCategory_Misc()
 -- end
-
 
 -- utils.pcall(initFunc)

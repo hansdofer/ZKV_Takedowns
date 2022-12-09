@@ -18,8 +18,7 @@ ZKVTD:AddModule("i18n", i18n)
 -- If a string starts with this, i18n will be skipped, this string will be stripped and the raw string is returned
 i18n.skipKey = "__SKIPi18n"
 
-
-local function LangTable_GetString(langTable, stringKey)
+local function LangTable_GetString( langTable, stringKey )
     stringKey = strlower(stringKey)
     local str = langTable[stringKey]
     if str ~= "" then
@@ -28,15 +27,13 @@ local function LangTable_GetString(langTable, stringKey)
     return nil
 end
 
-
-local function LangTable_HasString(langTable, stringKey)
+local function LangTable_HasString( langTable, stringKey )
     stringKey = strlower(stringKey)
     local str = langTable[stringKey]
     return utils.IsStrValid(str)
 end
 
-
-local function LangTable_AddString(langTable, stringKey, stringValue, allowOverwrite)
+local function LangTable_AddString( langTable, stringKey, stringValue, allowOverwrite )
     stringKey = strlower(stringKey)
     if not allowOverwrite and LangTable_HasString(langTable, stringKey) then
         return false
@@ -47,9 +44,10 @@ end
 
 -- ====================================================================================================================
 
-
-function i18n:AddLanguageTable(langKey, langLabelEnglish, langLabelLocalized)
-    if not utils.IsStrValid(langKey) then return end
+function i18n:AddLanguageTable( langKey, langLabelEnglish, langLabelLocalized )
+    if not utils.IsStrValid(langKey) then
+        return
+    end
     local localeTable = {}
     localeTable.strings = {}
     localeTable._labelEnglish = langLabelEnglish or utils.titleCase(langKey)
@@ -61,7 +59,7 @@ function i18n:AddLanguageTable(langKey, langLabelEnglish, langLabelLocalized)
     self.locales[langKey] = localeTable
 end
 
-function i18n:GetLanguageTable(langKey)
+function i18n:GetLanguageTable( langKey )
     if langKey == "enGB" or langKey == "enUS" or langKey == "enIE" then
         langKey = englishLangKey
     end
@@ -69,17 +67,19 @@ function i18n:GetLanguageTable(langKey)
     return self.locales[langKey]
 end
 
-function i18n:AddString(langKey, stringKey, stringValue)
+function i18n:AddString( langKey, stringKey, stringValue )
     local localeTable = self:GetLanguageTable(langKey)
     localeTable:AddString(stringKey, stringValue, false)
 end
-function i18n:AddStringEnglish(stringKey, stringValue)
+function i18n:AddStringEnglish( stringKey, stringValue )
     return i18n:AddString(englishLangKey, stringKey, stringValue)
 end
 
-function i18n:GetStringForLang(langKey, stringKey, default, allowEnglishFallback, allowEmpty)
+function i18n:GetStringForLang( langKey, stringKey, default, allowEnglishFallback, allowEmpty )
     langKey = string.lower(langKey)
-    if allowEnglishFallback == nil then allowEnglishFallback = true end
+    if allowEnglishFallback == nil then
+        allowEnglishFallback = true
+    end
     local localeTable = self:GetLanguageTable(langKey)
 
     local localizedStr = localeTable:GetString(stringKey)
@@ -93,7 +93,7 @@ function i18n:GetStringForLang(langKey, stringKey, default, allowEnglishFallback
     return localizedStr
 end
 
-function i18n:GetString(stringKey, default, allowEnglishFallback, allowEmpty)
+function i18n:GetString( stringKey, default, allowEnglishFallback, allowEmpty )
 
     if utils.Str_starts_with(stringKey, i18n.skipKey) then
         local tempStr = gsub(stringKey, i18n.skipKey, "")
@@ -106,7 +106,7 @@ function i18n:GetString(stringKey, default, allowEnglishFallback, allowEmpty)
     return i18n:GetStringForLang(langKey, stringKey, default, allowEnglishFallback, allowEmpty)
 end
 
-function i18n:GetStringEnglish(stringKey, default, allowEmpty)
+function i18n:GetStringEnglish( stringKey, default, allowEmpty )
     i18n:GetStringForLang(englishLangKey, stringKey, default, false, allowEmpty)
 end
 
@@ -117,15 +117,13 @@ function i18n:GetCurrentLanguageKey()
     return locCode or "en-us"
 end
 
-
-function i18n:NoTranslateString(str)
+function i18n:NoTranslateString( str )
     return i18n.skipKey .. str
 end
 
-
 -- GetMod("ZKV_Takedowns").i18n:DumpStrings()
 function i18n:DumpStrings()
-    for _,v in pairs(self.locales) do
+    for _, v in pairs(self.locales) do
         for key, val in pairs(v) do
             ZKVTD.debug("i18n", key, val)
         end

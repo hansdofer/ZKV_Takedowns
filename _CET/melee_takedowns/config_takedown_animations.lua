@@ -13,23 +13,20 @@ local utils = ZKVTD.utils
 -- -- WARNING: Change these at your own risk. Some combinations of weapon and workspot can crash the game or cause a softlock, trapping you in a stuck animation.
 -- -- Entries in the tables should be strings referencing the tag of a takedown or finisher effect
 
-
 -- ---- ---- ---- ----
 -- Melee Weapons
 -- ---- ----
 
 -- Fists & Gorilla Arms
-local takedown_anims_weapon_FISTS =
-{
-    "finisher_default",             -- Throat-punch to Haymaker
+local takedown_anims_weapon_FISTS = {
+    "finisher_default", -- Throat-punch to Haymaker
     -- "Cyb_StrongArms_Back",       -- No difference from finisher_default in CDPR effectSet
-    "AerialTakedown_Back_Simple",   -- Face-to-ground smash
-    "AerialTakedown_Simple",        -- Occipital smash
+    "AerialTakedown_Back_Simple", -- Face-to-ground smash
+    "AerialTakedown_Simple", -- Occipital smash
 }
 
 -- Katana
-local takedown_anims_weapon_LONG_BLADE =
-{
+local takedown_anims_weapon_LONG_BLADE = {
     -- "Wea_Katana",                -- 2h Gut stab
     -- "Wea_Katana_Back",           -- Behead
 
@@ -38,18 +35,17 @@ local takedown_anims_weapon_LONG_BLADE =
     -- "ZKVTD_Takedown_SafeAttack",        -- Slice left-to-right into side of neck
     -- "ZKVTD_Takedown_BlockAttack",       -- Quick horizontal left-to-right slash, left-hand splayed (Defensive Attack)
 
-    "ZKVTD_Katana_backstab",        -- 2h Backstab (WIP)
-    "ZKVTD_Katana_behead_behind",   -- Behead, target facing away from V
+    "ZKVTD_Katana_backstab", -- 2h Backstab (WIP)
+    "ZKVTD_Katana_behead_behind", -- Behead, target facing away from V
 }
 
 -- Knife, Machete & Chain SWord
-local takedown_anims_weapon_SHORT_BLADE =
-{
+local takedown_anims_weapon_SHORT_BLADE = {
     -- "ZKVTD_Takedown_HeavyAttack01",     -- Quick horizontal stab to back of neck
     -- "ZKVTD_Takedown_HeavyAttack02",  -- Quick vertical stab to back of neck
 
     -- "ZKVTD_Takedown_SafeAttack",     -- Quick stab to back of neck
-    "ZKVTD_Takedown_BlockAttack",    -- Quick stab to back of neck
+    "ZKVTD_Takedown_BlockAttack", -- Quick stab to back of neck
     -- "ZKVTD_Knife_backstab",          -- 2h Backstab
 
     -- "finisher_default",
@@ -57,8 +53,7 @@ local takedown_anims_weapon_SHORT_BLADE =
 
 -- 1h Club
 -- References to animations for one-handed blunt exist in the game files, but the actual animations are missing or unfinished
-local takedown_anims_weapon_ONE_HANDED_CLUB =
-{
+local takedown_anims_weapon_ONE_HANDED_CLUB = {
     -- "finisher_default",
 
     -- "ZKVTD_Takedown_HeavyAttack01",     -- Downward strike (Blackjack-like)
@@ -70,8 +65,7 @@ local takedown_anims_weapon_ONE_HANDED_CLUB =
 
 -- 2h Club
 -- References to finisher animations for two-handed club exist in the game files, but the actual animations are missing or unfinished
-local takedown_anims_weapon_TWO_HANDED_CLUB =
-{
+local takedown_anims_weapon_TWO_HANDED_CLUB = {
     -- "finisher_default",
 
     -- "ZKVTD_Takedown_HeavyAttack01",     -- Diagonal bottom-right-to-top-left strike
@@ -80,13 +74,12 @@ local takedown_anims_weapon_TWO_HANDED_CLUB =
     -- "ZKVTD_Takedown_BlockAttack",          -- Mid-shaft interruptive thrust (Defensive attack)
     -- "ZKVTD_Takedown_HeavyAttack01_QuickDeath",
     -- "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
-    "ZKVTD_Takedown_ComboAttack03_QuickDeath",  -- Downwards 2h strike
+    "ZKVTD_Takedown_ComboAttack03_QuickDeath", -- Downwards 2h strike
 }
 
 -- Hammer
 -- References to finisher animations for hammer exist in the game files, but the actual animations are missing or unfinished
-local takedown_anims_weapon_HAMMER =
-{
+local takedown_anims_weapon_HAMMER = {
     -- "finisher_default",
 
     -- "ZKVTD_Takedown_HeavyAttack01",     -- Right-left downwards strike
@@ -96,7 +89,6 @@ local takedown_anims_weapon_HAMMER =
     "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
 }
 
-
 -- ---- ---- ---- ----
 -- Cyberware
 -- ---- ----
@@ -105,8 +97,8 @@ local takedown_anims_weapon_HAMMER =
 -- Default: Finisher-from-behind and aerial-takedown-from-behind
 -- Uncomment the other entries (by removing '--') to also use their equivalents from-front. Might look weird or move you around when doing takedowns from behind.
 local takedown_anims_cyber_MANTIS_BLADES = {
-    "Cyb_MantisBlades_Back",             -- Double-impale and lift
-    "AerialTakedown_Back_MantisBlades",     -- Ground-slam with neck/head impale
+    "Cyb_MantisBlades_Back", -- Double-impale and lift
+    "AerialTakedown_Back_MantisBlades", -- Ground-slam with neck/head impale
     -- "ZKVTD_Cyb_MantisBlades_Back",          -- Double-impale and lift
 
     -- "ZKVTD_Takedown_HeavyAttack01",
@@ -134,10 +126,7 @@ local takedown_anims_cyber_MONOWIRE = {
 
 -- Launcher
 -- Only listed here for completeness
-local takedown_anims_cyber_LAUNCHER = {
-    "finisher_default",
-}
-
+local takedown_anims_cyber_LAUNCHER = { "finisher_default" }
 
 -- ====================================================================================================================
 -- ZKV_Takedowns
@@ -149,13 +138,13 @@ local takedownAnimsByWeapon = {
 
     -- Long Blades share anims
     Wea_LongBlade = takedown_anims_weapon_LONG_BLADE,
-    Wea_Katana = takedown_anims_weapon_LONG_BLADE, --takedown_anims_weapon_KATANA,
+    Wea_Katana = takedown_anims_weapon_LONG_BLADE, -- takedown_anims_weapon_KATANA,
 
     -- Short Blades share anims
     Wea_ShortBlade = takedown_anims_weapon_SHORT_BLADE,
-    Wea_Chainsword = takedown_anims_weapon_SHORT_BLADE, --takedown_anims_weapon_CHAIN_SWORD,
-    Wea_Knife = takedown_anims_weapon_SHORT_BLADE, --takedown_anims_weapon_KNIFE,
-    Wea_Machete = takedown_anims_weapon_SHORT_BLADE, --takedown_anims_weapon_MACHETE,
+    Wea_Chainsword = takedown_anims_weapon_SHORT_BLADE, -- takedown_anims_weapon_CHAIN_SWORD,
+    Wea_Knife = takedown_anims_weapon_SHORT_BLADE, -- takedown_anims_weapon_KNIFE,
+    Wea_Machete = takedown_anims_weapon_SHORT_BLADE, -- takedown_anims_weapon_MACHETE,
 
     Wea_OneHandedClub = takedown_anims_weapon_ONE_HANDED_CLUB,
 
@@ -166,7 +155,7 @@ local takedownAnimsByWeapon = {
     Cyb_MantisBlades = takedown_anims_cyber_MANTIS_BLADES,
 
     -- StrongArms share anims with fists
-    Cyb_StrongArms = takedown_anims_weapon_FISTS, --takedown_anims_cyber_STRONG_ARMS,
+    Cyb_StrongArms = takedown_anims_weapon_FISTS, -- takedown_anims_cyber_STRONG_ARMS,
 
     Cyb_NanoWires = takedown_anims_cyber_MONOWIRE,
     Cyb_Launcher = takedown_anims_cyber_LAUNCHER,
@@ -174,6 +163,5 @@ local takedownAnimsByWeapon = {
 
 ZKVTD.Config.SetDefaultValue("takedownAnims_defaultsLoaded", true)
 ZKVTD.Config.SetDefaultValue("takedownAnims", takedownAnimsByWeapon)
-
 
 ZKVTD.print("(Old) Takedown Animations Configuration loaded!")

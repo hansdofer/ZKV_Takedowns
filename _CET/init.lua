@@ -1,7 +1,6 @@
 -- ====================================================================================================================
 -- ZKV_Takedowns for CP2077 by Kvalyr
 -- ====================================================================================================================
-
 local version = "0.4.0"
 local modString = "ZKV_Takedowns v" .. version
 local ZKV_Takedowns = {
@@ -21,7 +20,6 @@ local utils = assert(loadfile("utils.lua"))(ZKVTD)
 utils.ImportUtilMethods()
 
 -- ====================================================================================================================
-
 
 local function SetupLocalization()
     ZKVTD.debug("SetupLocalization")
@@ -52,7 +50,6 @@ local function SetupMeleeTakedowns()
     ZKVTD:InitModule("MeleeTakedowns")
 end
 
-
 local function onInit()
     ZKVTD.debug("onInit")
     utils.doFile("constants.lua")
@@ -71,11 +68,9 @@ local function onInit()
 
     utils.pcall(SetupConfig)
     utils.pcall(SetupLocalization)
-
     utils.pcall(SetupMeleeTakedowns)
     -- utils.doFile("experimental/speedups.lua")
     -- utils.doFile("experimental/control_unlocks.lua")
-
     utils.pcall(SetupSettings)
 
     utils.doFile("debug/debug.lua", true)
@@ -83,12 +78,10 @@ local function onInit()
     ZKVTD.print("Finished Loading!")
 end
 
-
 function ZKVTD:New()
     registerForEvent("onInit", onInit)
 
     return ZKVTD
 end
-
 
 return ZKVTD:New()

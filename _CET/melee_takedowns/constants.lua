@@ -63,7 +63,7 @@ function constants:Init()
 
     -- ====================================================================================================================
 
-    function MeleeTakedowns:ValidateWeaponType(weaponType)
+    function MeleeTakedowns:ValidateWeaponType( weaponType )
         if not constants.weaponTypesIndices[weaponType] then
             utils.printError("Invalid weaponType:", weaponType)
             return false
@@ -71,7 +71,7 @@ function constants:Init()
         return true
     end
 
-    function MeleeTakedowns:ValidateAnimKey(animKey)
+    function MeleeTakedowns:ValidateAnimKey( animKey )
         if not constants.takedownAnimsIndices[animKey] then
             utils.printError("Invalid animKey:", animKey)
             return false
@@ -86,47 +86,47 @@ function constants:Init()
         -- CDPR effects/workspots
 
         -- Default takedown
-        "finisher_default",                     -- Throat-punch with haymaker follow-up
+        "finisher_default", -- Throat-punch with haymaker follow-up
 
         -- Unarmed Aerial
-        "AerialTakedown_Simple",                -- Occipital smash
-        "AerialTakedown_Back_Simple",           -- Face-to-ground smash
+        "AerialTakedown_Simple", -- Occipital smash
+        "AerialTakedown_Back_Simple", -- Face-to-ground smash
 
         -- Long Blades
-        "Wea_Katana",                           -- Impale from front
-        "Wea_Katana_Back",                      -- Kneel and behead. Target turns to face V
+        "Wea_Katana", -- Impale from front
+        "Wea_Katana_Back", -- Kneel and behead. Target turns to face V
 
         -- Mantis Blades
-        "Cyb_MantisBlades",                     -- Double-impale and lift
-        "Cyb_MantisBlades_Back",                -- Double-impale and lift (target turns to face V)
-        "AerialTakedown_MantisBlades",          -- Ground-slam with neck/head impale
-        "AerialTakedown_Back_MantisBlades",     -- Ground-slam with neck/head impale
+        "Cyb_MantisBlades", -- Double-impale and lift
+        "Cyb_MantisBlades_Back", -- Double-impale and lift (target turns to face V)
+        "AerialTakedown_MantisBlades", -- Ground-slam with neck/head impale
+        "AerialTakedown_Back_MantisBlades", -- Ground-slam with neck/head impale
 
         -- Gorilla Arms
-        "Cyb_StrongArms_Back",                  -- No difference from finisher_default in CDPR effectSet
+        "Cyb_StrongArms_Back", -- No difference from finisher_default in CDPR effectSet
 
         -- ==== ====
         -- ZKVTD custom effects/workspots
 
         -- Katana
-        "ZKVTD_Katana_backstab",                -- Same as Wea_Katana but target remains facing away from V
-        "ZKVTD_Katana_behead_behind",           -- Same as Wea_Katana_Back but target remains facing away from V
+        "ZKVTD_Katana_backstab", -- Same as Wea_Katana but target remains facing away from V
+        "ZKVTD_Katana_behead_behind", -- Same as Wea_Katana_Back but target remains facing away from V
 
         -- Monowire
-        "ZKVTD_Monowire_behead_behind",         -- Monowire behead-from-behind takedown. Target kneels and head flies off.
+        "ZKVTD_Monowire_behead_behind", -- Monowire behead-from-behind takedown. Target kneels and head flies off.
 
-        "ZKVTD_Knife_backstab",                 -- Same as ZKVTD_Katana_backstab, but with offsets adjusted for a shorter blade
+        "ZKVTD_Knife_backstab", -- Same as ZKVTD_Katana_backstab, but with offsets adjusted for a shorter blade
 
         -- Repurposed attack animations
         -- _QuickDeath == Target dies and ragdolls quickly, instead of using katana front-stab death sequence
-        "ZKVTD_Takedown_HeavyAttack01",             -- Strong attack from neutral
+        "ZKVTD_Takedown_HeavyAttack01", -- Strong attack from neutral
         "ZKVTD_Takedown_HeavyAttack01_QuickDeath",
-        "ZKVTD_Takedown_HeavyAttack02",             -- Strong attack 2nd hit in combo
+        "ZKVTD_Takedown_HeavyAttack02", -- Strong attack 2nd hit in combo
         "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
-        "ZKVTD_Takedown_ComboAttack03",             -- Light attack, third hit in combo
+        "ZKVTD_Takedown_ComboAttack03", -- Light attack, third hit in combo
         "ZKVTD_Takedown_ComboAttack03_QuickDeath",
-        "ZKVTD_Takedown_SafeAttack",                -- ??? Unsure when the base game uses this attack
-        "ZKVTD_Takedown_BlockAttack",               -- Strong attack from block (Defensive attack)
+        "ZKVTD_Takedown_SafeAttack", -- ??? Unsure when the base game uses this attack
+        "ZKVTD_Takedown_BlockAttack", -- Strong attack from block (Defensive attack)
     }
     local takedownAnimsIndices = utils.Table_createInverseArray_Strings(takedownAnims)
     constants.takedownAnims = takedownAnims
@@ -137,12 +137,7 @@ function constants:Init()
     -- ====================================================================================================================
     -- Allowed animations by weapon
 
-    local allowedAnims_FISTS = {
-        "finisher_default",
-        "AerialTakedown_Back_Simple",
-        "AerialTakedown_Simple",
-    }
-
+    local allowedAnims_FISTS = { "finisher_default", "AerialTakedown_Back_Simple", "AerialTakedown_Simple" }
 
     local allowedAnims_LONG_BLADE = {
         "Wea_Katana",
@@ -155,11 +150,7 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_SHORT_BLADE = {
-        "ZKVTD_Knife_backstab",
-        "ZKVTD_Takedown_SafeAttack",
-        "ZKVTD_Takedown_BlockAttack",
-    }
+    local allowedAnims_SHORT_BLADE = { "ZKVTD_Knife_backstab", "ZKVTD_Takedown_SafeAttack", "ZKVTD_Takedown_BlockAttack" }
 
     local allowedAnims_MEDIUM_BLADE = {
         "Wea_Katana",
@@ -174,17 +165,11 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_ONE_HANDED_CLUB = {
-        "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
-    }
+    local allowedAnims_ONE_HANDED_CLUB = { "ZKVTD_Takedown_HeavyAttack02_QuickDeath" }
 
-    local allowedAnims_TWO_HANDED_CLUB = {
-        "ZKVTD_Takedown_ComboAttack03_QuickDeath",
-    }
+    local allowedAnims_TWO_HANDED_CLUB = { "ZKVTD_Takedown_ComboAttack03_QuickDeath" }
 
-    local allowedAnims_HAMMER = {
-        "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
-    }
+    local allowedAnims_HAMMER = { "ZKVTD_Takedown_HeavyAttack02_QuickDeath" }
 
     local allowedAnims_MANTIS_BLADES = {
         "Cyb_MantisBlades",
@@ -195,9 +180,7 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_MONOWIRE = {
-        "ZKVTD_Monowire_behead_behind",
-    }
+    local allowedAnims_MONOWIRE = { "ZKVTD_Monowire_behead_behind" }
 
     local allowedAnimsByWeapon = {
         Wea_Fists = allowedAnims_FISTS,

@@ -12,15 +12,23 @@ ZKVMOD.utils = utils
 
 -- ====================================================================================================================
 -- Output
-utils.print = function(...) print(ZKVMOD.modString, ": ", ...) end
-utils.printError = function(...) print(ZKVMOD.modString, ":ERROR: ", ...) end
-utils.debug = function(...)
-    if not ZKVMOD.debugMode then return end
+utils.print = function( ... )
+    print(ZKVMOD.modString, ": ", ...)
+end
+utils.printError = function( ... )
+    print(ZKVMOD.modString, ":ERROR: ", ...)
+end
+utils.debug = function( ... )
+    if not ZKVMOD.debugMode then
+        return
+    end
     print(ZKVMOD.modString, ": ", ...)
 end
 
-function utils.ImportUtilMethods(mod)
-    if not mod then mod = ZKVMOD end
+function utils.ImportUtilMethods( mod )
+    if not mod then
+        mod = ZKVMOD
+    end
     mod.print = utils.print
     mod.printError = utils.printError
     mod.debug = utils.debug
@@ -48,7 +56,7 @@ function utils.GetNativeSettingsMod()
     return nativeSettings
 end
 
-function utils.pcall(func, ...)
+function utils.pcall( func, ... )
     local status_ok, retVal = pcall(func, ...)
     if status_ok then
         return status_ok, retVal
@@ -57,14 +65,14 @@ function utils.pcall(func, ...)
     end
 end
 
-function utils.assert(testVal, msg)
+function utils.assert( testVal, msg )
     if not testVal then
         utils.print("[Fatal error]: '" .. tostring(msg) .. "'")
         assert(testVal, msg)
     end
 end
 
-function utils.doFile(filePath, silent)
+function utils.doFile( filePath, silent )
     if not silent then
         utils.debug("doFile: Executing Lua file: " .. filePath)
     end
@@ -83,68 +91,67 @@ end
 -- ====================================================================================================================
 -- Strings
 
-function utils.IsStrValid(inputStr, allowEmpty)
+function utils.IsStrValid( inputStr, allowEmpty )
     if not allowEmpty and inputStr == "" then
         return false
     end
     return inputStr ~= nil
 end
 
-function utils.strsplit(inputStr, sep)
+function utils.strsplit( inputStr, sep )
     if sep == nil then
         sep = "%s"
     end
     local tab = {}
-    for str in string.gmatch(inputStr, "([^"..sep.."]+)") do
+    for str in string.gmatch(inputStr, "([^" .. sep .. "]+)") do
         table.insert(tab, str)
     end
     return tab
 end
 
-
-function utils.firstToUpper(inputStr)
+function utils.firstToUpper( inputStr )
     return (inputStr:gsub("^%l", strupper))
 end
 
-
-function utils.firstOnlyToUpper(inputStr)
+function utils.firstOnlyToUpper( inputStr )
     return utils.firstToUpper(strlower(inputStr))
 end
 
-
-local function tchelper(first, rest)
-    return first:upper()..rest:lower()
+local function tchelper( first, rest )
+    return first:upper() .. rest:lower()
 end
-function utils.strTitleCase(inputStr)
+function utils.strTitleCase( inputStr )
     -- http://lua-users.org/wiki/StringRecipes
     return inputStr:gsub("(%a)([%w_']*)", tchelper)
 end
 
-function utils.Str_AddLeadingZeroes(number, intendedLength)
+function utils.Str_AddLeadingZeroes( number, intendedLength )
     local str = tostring(number)
     local diff = intendedLength - strlen(str)
     if diff > 0 then
-        for i=1, diff do
-            str = "0"..str
+        for i = 1, diff do
+            str = "0" .. str
         end
     end
     return str
 end
 
-function utils.Str_starts_with(str, start)
+function utils.Str_starts_with( str, start )
     return str:sub(1, #start) == start
- end
+end
 
- function utils.Str_ends_with(str, ending)
+function utils.Str_ends_with( str, ending )
     return ending == "" or str:sub(-#ending) == ending
- end
+end
 
 -- ====================================================================================================================
 -- Tables
-function utils.Table_Size(tab)
-    --if tab == nil then return nil end
+function utils.Table_Size( tab )
+    -- if tab == nil then return nil end
     -- if type(tab) ~= "table" then return nil end
-    if next(tab) == nil then return 0 end
+    if next(tab) == nil then
+        return 0
+    end
     local numItems = 0
     for _, _ in pairs(tab) do
         numItems = numItems + 1
@@ -152,7 +159,7 @@ function utils.Table_Size(tab)
     return numItems or 0
 end
 
-function utils.Table_createInverseArray(tab, asStrings)
+function utils.Table_createInverseArray( tab, asStrings )
     -- Create a mapping table for getting the index of a value
     local mapping = {}
     for idx, value in ipairs(tab) do
@@ -165,7 +172,7 @@ function utils.Table_createInverseArray(tab, asStrings)
     return mapping
 end
 
-function utils.Table_createInverseArray_Strings(tab, asStrings)
+function utils.Table_createInverseArray_Strings( tab, asStrings )
     return utils.Table_createInverseArray(tab, true)
 end
 
@@ -173,7 +180,7 @@ end
 -- TweakDB
 local flatArrayMax = 1000 -- Arbitrary max to catch inf. loops and runaways
 
-function utils.TweakDB_CreateArrayOfFlats(tab, flatKey, doIPairs)
+function utils.TweakDB_CreateArrayOfFlats( tab, flatKey, doIPairs )
     local count = utils.Table_Size(tab)
     if count > flatArrayMax then
         utils.printError("utils.TweakDB_CreateArrayOfFlats() - Excessive table size for insertion to TweakDB:", flatKey, count)
@@ -209,7 +216,7 @@ function utils.TweakDB_CreateArrayOfFlats(tab, flatKey, doIPairs)
     return true
 end
 
-function utils.TweakDB_CreateArrayOfFlatsAndIndices(tab, flatKey, doIPairs, zeroPad)
+function utils.TweakDB_CreateArrayOfFlatsAndIndices( tab, flatKey, doIPairs, zeroPad )
     utils.TweakDB_CreateArrayOfFlats(tab, flatKey, doIPairs)
 
     -- Create the inverse table map and put that in TDB too
@@ -217,7 +224,7 @@ function utils.TweakDB_CreateArrayOfFlatsAndIndices(tab, flatKey, doIPairs, zero
     utils.TweakDB_CreateArrayOfFlats(indicesTab, flatKey .. "_idx", false)
 end
 
-function utils.TweakDB_GetArrayFromFlats(flatKey)
+function utils.TweakDB_GetArrayFromFlats( flatKey )
     local count = TweakDB:GetFlat(flatKey .. ".count")
     if not count or count < 0 or count > flatArrayMax then
         utils.printError("utils.TweakDB_GetArrayFromFlats() - Invalid array size for retrieval from TweakDB:", flatKey, count)
@@ -240,7 +247,7 @@ function utils.TweakDB_GetArrayFromFlats(flatKey)
     -- store flats in table, check len, return
 end
 
-function utils.TweakDB_GetFlatWithBackup(flatKey)
+function utils.TweakDB_GetFlatWithBackup( flatKey )
     -- Get value at flatKey and save to another free flat so that we can reference CDPR values when reloading mod
     local backupKey = flatKey .. "_zkvbackup"
     local baseValue = TweakDB:GetFlat(backupKey)
@@ -260,14 +267,14 @@ function utils.TweakDB_GetFlatWithBackup(flatKey)
     return baseValue
 end
 
-function utils.TweakDB_MultiplyValueWithBackup(flatKey, mult)
+function utils.TweakDB_MultiplyValueWithBackup( flatKey, mult )
     local baseValue = utils.TweakDB_GetFlatWithBackup(flatKey)
     local newValue = baseValue * mult
     TweakDB:SetFlat(flatKey, newValue)
     utils.debug("TweakDB_MultiplyValueWithBackup: ", flatKey, baseValue, newValue)
 end
 
-function utils.TweakDB_AddValueWithBackup(flatKey, value)
+function utils.TweakDB_AddValueWithBackup( flatKey, value )
     local baseValue = utils.TweakDB_GetFlatWithBackup(flatKey)
     local newValue = baseValue + value
     TweakDB:SetFlat(flatKey, newValue)

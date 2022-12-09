@@ -29,14 +29,12 @@ local weaponTypesIndices = utils.Table_createInverseArray_Strings(weaponTypes)
 constants.weaponTypes = weaponTypes
 constants.weaponTypesIndices = weaponTypesIndices
 
-
 -- local weaponCategories_sharedAnims = {
 --     Wea_Fists = {"Wea_Fists", "Cyb_StrongArms"},
 --     Wea_LongBlade = {"Wea_LongBlade", "Wea_Katana", "Wea_Machete"},
 --     Wea_ShortBlade = {"Wea_ShortBlade", "Wea_Knife", "Wea_Chainsword"}
 -- }
 -- constants.weaponCategories_sharedAnims = weaponCategories_sharedAnims
-
 
 -- local takedownAnims = {
 --     -- ==== ====
@@ -89,7 +87,6 @@ constants.weaponTypesIndices = weaponTypesIndices
 -- constants.takedownAnims = takedownAnims
 -- constants.takedownAnimsIndices = takedownAnimsIndices
 
-
 -- utils.TweakDB_CreateArrayOfFlatsAndIndices(takedownAnims, "ZKVTD.TakedownAnims", true)
 -- utils.TweakDB_CreateArrayOfFlatsAndIndices(weaponTypes, "ZKVTD.WeaponTypes", true)
 
@@ -119,7 +116,6 @@ constants.weaponTypesIndices = weaponTypesIndices
 --     "AerialTakedown_Simple",
 -- }
 
-
 -- local allowedAnims_LONG_BLADE = {
 --     "Wea_Katana",
 --     "Wea_Katana_Back",
@@ -140,7 +136,6 @@ constants.weaponTypesIndices = weaponTypesIndices
 -- local allowedAnims_MEDIUM_BLADE = {}
 -- for _, anim in ipairs(allowedAnims_LONG_BLADE) do table.insert(allowedAnims_MEDIUM_BLADE, anim) end
 -- for _, anim in ipairs(allowedAnims_SHORT_BLADE) do table.insert(allowedAnims_MEDIUM_BLADE, anim) end
-
 
 -- local allowedAnims_ONE_HANDED_CLUB = {
 --     "ZKVTD_Takedown_HeavyAttack02_QuickDeath",

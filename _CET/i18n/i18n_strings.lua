@@ -7,7 +7,7 @@ ZKVTD:AddModule("i18n_strings", i18n_strings)
 ZKVTD.i18n.strings = i18n_strings
 
 local i18n = ZKVTD.i18n
-local function AddStringsForLanguage(langKey, stringsTable)
+local function AddStringsForLanguage( langKey, stringsTable )
     for key, value in pairs(stringsTable) do
         i18n:AddString(langKey, key, value)
     end
@@ -79,7 +79,6 @@ function i18n_strings:Init()
         ["Cyb_StrongArms"] = "Gorilla Arms",
         ["Cyb_NanoWires"] = "Monowire",
         -- ["Cyb_Launcher"] = "Wea_Machete",
-
 
         ["zkvtd_settings.category.takedowns"] = "Takedowns",
         ["zkvtd_settings.category.mtb_animswap"] = "Mantis Blades Finishers",
@@ -258,5 +257,5 @@ function i18n_strings:Init()
     }
     AddStringsForLanguage("zh-tw", strings_ZHTW)
 
--- ====================================================================================================================
+    -- ====================================================================================================================
 end

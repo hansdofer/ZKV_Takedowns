@@ -13,7 +13,7 @@ ZKVTD.Modules["MemConfig"] = Config
 ZKVTD.Modules["Config"] = Config
 -- ====================================================================================================================
 
-function Config.GetValue(key, default)
+function Config.GetValue( key, default )
     -- TODO: Move to settings.lua
     local value = configTable[key]
     if value == nil then
@@ -22,7 +22,7 @@ function Config.GetValue(key, default)
     return value
 end
 
-function Config.SetValue(key, value, noSave)
+function Config.SetValue( key, value, noSave )
     -- TODO: Move to settings.lua
     configTable[key] = value
     if not noSave then
@@ -30,7 +30,7 @@ function Config.SetValue(key, value, noSave)
     end
 end
 
-function Config.SetDefaultValue(key, value)
+function Config.SetDefaultValue( key, value )
     ZKVTD.Config.SetValue(key, value, true)
 end
 
@@ -47,7 +47,7 @@ end
 --     end
 -- end
 
-function Config.AddCallback(callbackKey, callbackFunc)
+function Config.AddCallback( callbackKey, callbackFunc )
     local existing = configCallbacks[callbackKey]
     if existing then
         ZKVTD.print("Error: Config callback already exists at key:", callbackKey)
@@ -57,10 +57,12 @@ function Config.AddCallback(callbackKey, callbackFunc)
     end
 end
 
-function Config.AddCallback_GenericSetFlat(flatKey, configKey, default, callbackKey, multiplier)
-    if default == nil then default = true end
+function Config.AddCallback_GenericSetFlat( flatKey, configKey, default, callbackKey, multiplier )
+    if default == nil then
+        default = true
+    end
 
-    local function callbackFunc(newValue)
+    local function callbackFunc( newValue )
         if newValue == nil then
             newValue = ZKVTD.Config.GetValue(configKey, default)
         else
@@ -69,7 +71,7 @@ function Config.AddCallback_GenericSetFlat(flatKey, configKey, default, callback
         local success = TweakDB:SetFlat(flatKey, newValue)
         ZKVTD.debug("-Config Callback-", flatKey, "newValue:", newValue, "SetFlat success:", success)
         if not success then
-            ZKVTD.printError("Failed to SetFlat:", "'"..flatKey.."'", newValue)
+            ZKVTD.printError("Failed to SetFlat:", "'" .. flatKey .. "'", newValue)
         end
 
         -- dumpConfig()
@@ -82,17 +84,19 @@ function Config.AddCallback_GenericSetFlat(flatKey, configKey, default, callback
     Config.AddCallback(callbackKey, callbackFunc)
 end
 
-function Config.GetCallback(callbackKey)
+function Config.GetCallback( callbackKey )
     -- TODO: Move to settings.lua
     local callbackFunc = configCallbacks[callbackKey]
     if not callbackFunc then
         ZKVTD.debug("Warning: Failed to retrieve config callback:", callbackKey)
-        return function() ZKVTD.debug("Warning: Dummy callback for:", callbackKey) end
+        return function()
+            ZKVTD.debug("Warning: Dummy callback for:", callbackKey)
+        end
     end
     return callbackFunc
 end
 
-function Config.CallCallback(callbackKey)
+function Config.CallCallback( callbackKey )
     -- TODO: Move to settings.lua
     local func = ZKVTD.Config.GetCallback(callbackKey)
     local funcType = type(func)
@@ -103,10 +107,7 @@ function Config.CallCallback(callbackKey)
     end
 end
 
-
 -- ====================================================================================================================
-
-
 
 function Config.InitAllCallbacks()
     for _, callbackFunc in pairs(configCallbacks) do

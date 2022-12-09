@@ -7,21 +7,27 @@ local utils = ZKVTD.utils
 local MeleeTakedowns = {}
 ZKVTD:AddModule("MeleeTakedowns", MeleeTakedowns)
 
-function MeleeTakedowns:GetAnimTableConfigKeyByWeapon(weaponType, skipValidation)
-    if not skipValidation and not self:ValidateWeaponType(weaponType) then return end
+function MeleeTakedowns:GetAnimTableConfigKeyByWeapon( weaponType, skipValidation )
+    if not skipValidation and not self:ValidateWeaponType(weaponType) then
+        return
+    end
 
     return self.constants.configKey .. ":" .. weaponType
 end
 
-function MeleeTakedowns:GetAnimTableTweakDBKeyByWeapon(weaponType, skipValidation)
-    if not skipValidation and not self:ValidateWeaponType(weaponType) then return end
+function MeleeTakedowns:GetAnimTableTweakDBKeyByWeapon( weaponType, skipValidation )
+    if not skipValidation and not self:ValidateWeaponType(weaponType) then
+        return
+    end
 
     local tweakDBKey = self.constants.tweakDBKey_AnimStates
     return tweakDBKey .. ":" .. weaponType
 end
 
-function MeleeTakedowns:GetAnimTableForWeapon(weaponType, skipValidation)
-    if not skipValidation and not self:ValidateWeaponType(weaponType) then return end
+function MeleeTakedowns:GetAnimTableForWeapon( weaponType, skipValidation )
+    if not skipValidation and not self:ValidateWeaponType(weaponType) then
+        return
+    end
 
     local configKey = self:GetAnimTableConfigKeyByWeapon(weaponType, true)
     local animTable = ZKVTD.Config.GetValue(configKey, {})
@@ -32,16 +38,22 @@ function MeleeTakedowns:GetAnimTableForWeapon(weaponType, skipValidation)
     return animTable
 end
 
-function MeleeTakedowns:SetAnimTableForWeapon(weaponType, newTable, skipValidation)
-    if not skipValidation and not self:ValidateWeaponType(weaponType) then return end
+function MeleeTakedowns:SetAnimTableForWeapon( weaponType, newTable, skipValidation )
+    if not skipValidation and not self:ValidateWeaponType(weaponType) then
+        return
+    end
 
     local configKey = self:GetAnimTableConfigKeyByWeapon(weaponType, true)
     ZKVTD.Config.SetValue(configKey, newTable)
 end
 
-function MeleeTakedowns:SetAnimStateForWeapon(weaponType, animKey, newState)
-    if not self:ValidateWeaponType(weaponType) then return end
-    if not self:ValidateAnimKey(animKey) then return end
+function MeleeTakedowns:SetAnimStateForWeapon( weaponType, animKey, newState )
+    if not self:ValidateWeaponType(weaponType) then
+        return
+    end
+    if not self:ValidateAnimKey(animKey) then
+        return
+    end
     -- if newState ~= true and newState ~= false then
     --     ZKVTD.printError("Invalid new anim state for weapon:", newState)
     --     return
@@ -60,25 +72,30 @@ function MeleeTakedowns:SetAnimStateForWeapon(weaponType, animKey, newState)
     utils.TweakDB_CreateArrayOfFlats(animTable, tweakDBKey, false)
 end
 
-
-function MeleeTakedowns:GetAnimStateForWeapon(weaponType, animKey)
-    if not self:ValidateWeaponType(weaponType) then return end
-    if not self:ValidateAnimKey(animKey) then return end
+function MeleeTakedowns:GetAnimStateForWeapon( weaponType, animKey )
+    if not self:ValidateWeaponType(weaponType) then
+        return
+    end
+    if not self:ValidateAnimKey(animKey) then
+        return
+    end
 
     local animTable = self:GetAnimTableForWeapon(weaponType, true) or {}
     return animTable[animKey] or false
 end
 
-
-function MeleeTakedowns:GetCallbackKeyByWeaponAnim(weaponType, animKey, skipValidation)
-    if not skipValidation and not self:ValidateWeaponType(weaponType) then return end
-    if not skipValidation and not self:ValidateAnimKey(animKey) then return end
+function MeleeTakedowns:GetCallbackKeyByWeaponAnim( weaponType, animKey, skipValidation )
+    if not skipValidation and not self:ValidateWeaponType(weaponType) then
+        return
+    end
+    if not skipValidation and not self:ValidateAnimKey(animKey) then
+        return
+    end
 
     return self.constants.callbackKey .. ":" .. weaponType .. ":" .. animKey
 end
 
-
-local function Callback_Takedowns_OnlyMelee(newValue)
+local function Callback_Takedowns_OnlyMelee( newValue )
     -- Make takedown prompt only show when a weapon is held
     local instigatorPrereqs = TweakDB:GetFlat("Takedown.Grapple.instigatorPrereqs") -- Use grapple's prereqs as our basis
     local configKey = "Takedowns_OnlyWithMeleeWeaponHeld"
@@ -95,10 +112,9 @@ local function Callback_Takedowns_OnlyMelee(newValue)
     local success = TweakDB:SetFlat(flatKey, instigatorPrereqs)
     ZKVTD.debug("-Config Callback-", flatKey, "newValue:", newValue, "SetFlat success:", success)
     if not success then
-        ZKVTD.printError("Failed to SetFlat:", "'"..flatKey.."'", newValue)
+        ZKVTD.printError("Failed to SetFlat:", "'" .. flatKey .. "'", newValue)
     end
 end
-
 
 local function SetupInteractions_Lethal()
     -- Set up new interaction at same interaction layer as Grapple, using Choice2 (Grapple uses Choice1)
@@ -114,7 +130,6 @@ local function SetupInteractions_Lethal()
     -- Mimic the rewards flat of the Takedown.Takedown objectAction Record so that we properly award Ninjutsu XP on takedowns
     TweakDB:SetFlat("Takedown.Kv_MeleeTakedown.rewards", TweakDB:GetFlat("Takedown.Takedown.rewards"))
 end
-
 
 local function SetupInteractions_NonLethal()
     -- Non-lethal variant (used with blunt weapons and bare hands)
@@ -138,7 +153,6 @@ local function SetupInteractions_NonLethal()
     TweakDB:SetFlat(flatKey, instigatorPrereqs)
 end
 
-
 -- function ZKVTD:DumpTakedownsData()
 --     for _, weaponType in ipairs(ZKVTD.constants.weaponTypes) do
 --         for _, anim in pairs(ZKVTD.constants.allowedAnimsByWeapon[weaponType]) do
@@ -146,7 +160,7 @@ end
 --     end
 -- end
 
-local function setupAnims_old(self)
+local function setupAnims_old( self )
     -- Old pre-0.4.0 setup
     local takedownAnims = self.Config.GetValue("takedownAnims")
     if takedownAnims == nil then
@@ -162,7 +176,7 @@ local function setupAnims_old(self)
         TweakDB:SetFlat(takedownsCountFlatKey, tostring(takedownsCount))
 
         for idx_key, anim in ipairs(animTable) do
-            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. idx_key-1
+            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. idx_key - 1
             TweakDB:SetFlat(flatKey, anim)
         end
         -- self.debug(weapon_key, takedownsCount)
@@ -174,14 +188,13 @@ local function setupAnims_old(self)
     end
 end
 
-
 local function setupAnims()
 
     for _, weaponType in ipairs(ZKVTD.constants.weaponTypes) do
         local animTable = MeleeTakedowns.constants.allowedAnimsByWeapon[weaponType]
 
         for _, animKey in pairs(animTable) do
-            local function callback_weaponTypeAnims(newValue)
+            local function callback_weaponTypeAnims( newValue )
                 MeleeTakedowns:SetAnimStateForWeapon(weaponType, animKey, newValue)
             end
 
@@ -190,7 +203,6 @@ local function setupAnims()
         end
     end
 end
-
 
 function MeleeTakedowns:Init()
     ZKVTD.debug("MeleeTakedowns:Init()")
@@ -209,37 +221,24 @@ function MeleeTakedowns:Init()
 
     ZKVTD.Config.AddCallback("Update_Takedowns_OnlyMelee", Callback_Takedowns_OnlyMelee)
 
-    ZKVTD.Config.AddCallback_GenericSetFlat(
-        "ZKVTD.Takedowns.nonLethalBlunt",
-        "Takedowns_NonLethalBlunt",
-        true,
-        "Update_Takedowns_NonLethalBlunt"
-    )
+    ZKVTD.Config.AddCallback_GenericSetFlat("ZKVTD.Takedowns.nonLethalBlunt", "Takedowns_NonLethalBlunt", true, "Update_Takedowns_NonLethalBlunt")
 
     -- TODO: Move this
     -- MTB AnimSwap
     ZKVTD.Config.AddCallback_GenericSetFlat(
-        "ZKVTD.MantisBladesAnimSwap.UseAerial",
-        "MantisSwap_Finishers_UseAerialTakedownAnimation",
-        true, "Update_MTBAnimSwap_UseAerial"
+        "ZKVTD.MantisBladesAnimSwap.UseAerial", "MantisSwap_Finishers_UseAerialTakedownAnimation", true, "Update_MTBAnimSwap_UseAerial"
     )
     ZKVTD.Config.AddCallback_GenericSetFlat(
-        "ZKVTD.MantisBladesAnimSwap.RandomChoice",
-        "MantisSwap_Finishers_MixDifferentAnimations",
-        true, "Update_MTBAnimSwap_RandomChoice"
+        "ZKVTD.MantisBladesAnimSwap.RandomChoice", "MantisSwap_Finishers_MixDifferentAnimations", true, "Update_MTBAnimSwap_RandomChoice"
     )
 
     -- TODO: Move this
     -- Misc. Tweaks
     ZKVTD.Config.AddCallback_GenericSetFlat(
-        "EquipmentGLP.MeleeStealthPlayerBuff_inline1.value",
-        "Misc_Stealth_MeleeMult",
-        1.3,
-        "Update_Misc_Stealth_MeleeMult"
+        "EquipmentGLP.MeleeStealthPlayerBuff_inline1.value", "Misc_Stealth_MeleeMult", 1.3, "Update_Misc_Stealth_MeleeMult"
     )
 end
 
 -- ZKVTD:SetupMeleeTakedowns()
-
 
 ZKVTD.Modules["MeleeTakedowns"] = MeleeTakedowns
