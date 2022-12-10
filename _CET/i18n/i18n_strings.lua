@@ -254,7 +254,85 @@ function i18n_strings:Init()
 
     -- Chinese (TW)
     local strings_ZHTW = {
-        -- TODO: Using strings_EN as a reference, add translation strings here
+               ["Animations"] = "動畫",
+
+        -- Takedown animations
+        ["finisher_default.label"] = "預設終結技",
+        ["finisher_default.tooltip"] = "強力一擊擊倒伴隨而來的擊打喉嚨",
+        ["AerialTakedown_Simple.label"] = "騰空擊倒（徒手）",
+        ["AerialTakedown_Simple.tooltip"] = "騰空擊倒（徒手）",
+        ["AerialTakedown_Back_Simple.label"] = "騰空擊倒（背後）（徒手）",
+        ["AerialTakedown_Back_Simple.tooltip"] = "騰空擊倒（背後）（徒手）",
+        ["AerialTakedown_MantisBlades.label"] = "騰空擊倒（螳螂刀）",
+        ["AerialTakedown_MantisBlades.tooltip"] = "騰空擊倒（螳螂刀）",
+        ["AerialTakedown_Back_MantisBlades.label"] = "騰空擊倒（背後）（螳螂刀）",
+        ["AerialTakedown_Back_MantisBlades.tooltip"] = "騰空擊倒（背後）（螳螂刀）",
+
+        ["Wea_Katana.label"] = "雙手持長刀刺穿",
+        ["Wea_Katana.tooltip"] = "雙手刺穿（武士刀）",
+        ["Wea_Katana_Back.label"] = "斬首",
+        ["Wea_Katana_Back.tooltip"] = "斬首（武士刀）——目標轉向面對V",
+
+        ["Cyb_MantisBlades.label"] = "雙手刺穿並被舉起的終結技（正面）",
+        ["Cyb_MantisBlades.tooltip"] = "雙手刺穿並被舉起的終結技（正面）",
+        ["Cyb_MantisBlades_Back.label"] = "雙手刺穿並被舉起的終結技（背後）",
+        ["Cyb_MantisBlades_Back.tooltip"] = "雙手刺穿並被舉起的終結技（背後）",
+
+        ["ZKVTD_Takedown_HeavyAttack01.label"] = "強力攻擊 1",
+        ["ZKVTD_Takedown_HeavyAttack01.tooltip"] = "強力攻擊 1",
+        ["ZKVTD_Takedown_HeavyAttack02.label"] = "強力攻擊 2",
+        ["ZKVTD_Takedown_HeavyAttack02.tooltip"] = "強力攻擊 2",
+        ["ZKVTD_Takedown_ComboAttack03.label"] = "連擊 3",
+        ["ZKVTD_Takedown_ComboAttack03.tooltip"] = "連擊 3",
+        ["ZKVTD_Takedown_BlockAttack.label"] = "防禦攻擊",
+        ["ZKVTD_Takedown_BlockAttack.tooltip"] = "防禦攻擊",
+        ["ZKVTD_Takedown_SafeAttack.label"] = "無損攻擊",
+        ["ZKVTD_Takedown_SafeAttack.tooltip"] = "無損攻擊",
+
+        ["ZKVTD_Katana_backstab.label"] = "長刀背刺",
+        ["ZKVTD_Katana_backstab.tooltip"] = "雙手背刺刺穿（武士刀）",
+        ["ZKVTD_Katana_behead_behind.label"] = "斬首（背後）",
+        ["ZKVTD_Katana_behead_behind.tooltip"] = "斬首（武士刀）——目標仍背對著V",
+        ["ZKVTD_Knife_backstab.label"] = "雙手持短刀背刺",
+        ["ZKVTD_Knife_backstab.tooltip"] = "雙手持短刀背刺",
+        ["ZKVTD_Monowire_behead_behind.label"] = "斬首",
+        ["ZKVTD_Monowire_behead_behind.tooltip"] = "鐮線橫向交叉切割斬首",
+
+        -- Weapons -- TODO: Pull from game's own localization files?
+        ["Wea_Fists"] = "拳",
+        ["Wea_ShortBlade"] = "短刀",
+        ["Wea_Knife"] = "小刀",
+        ["Wea_LongBlade"] = "長刀",
+        ["Wea_Katana"] = "武士刀",
+        ["Wea_Chainsword"] = "鏈鋸劍",
+        ["Wea_Machete"] = "開山刀",
+        ["Wea_OneHandedClub"] = "單手棍",
+        ["Wea_TwoHandedClub"] = "雙手棍",
+        ["Wea_Hammer"] = "槌",
+        ["Cyb_MantisBlades"] = "螳螂刀",
+        ["Cyb_StrongArms"] = "大猩猩手臂",
+        ["Cyb_NanoWires"] = "鐮線",
+        -- ["Cyb_Launcher"] = "Wea_Machete",
+
+        ["zkvtd_settings.category.takedowns"] = "擊倒",
+        ["zkvtd_settings.category.mtb_animswap"] = "螳螂刀終結技",
+        ["zkvtd_settings.category.misc_tweaks"] = "雜項調整",
+        ["zkvtd_settings.category.takedowns_byweapon"] = "擊倒 - 動畫選擇",
+
+        ["zkvtd_settings.Takedowns.OnlyMelee.label"] = "僅於手持近戰武器時",
+        ["zkvtd_settings.Takedowns.OnlyMelee.tooltip"] = "切換使否顯示新的「擊倒/殺死」提示，僅於持有近戰武器（開）或任何武器（關）時。\n擒伏不受此影響。",
+
+        ["zkvtd_settings.Takedowns.NonLethalBlunt.label"] = "非致命鈍器",
+        ["zkvtd_settings.Takedowns.NonLethalBlunt.tooltip"] = "預設情況下，使用鈍器武器（拳頭、大猩猩手臂、棍棒、球棒等）擊倒時，僅會使目標失去知覺。\n關閉此項會使擊倒成為致命。",
+
+        ["zkvtd_settings.MTBAnimSwap.UseAerial.label"] = "使用螳螂刀騰空擊倒的終結技",
+        ["zkvtd_settings.MTBAnimSwap.UseAerial.tooltip"] = "切換此選項可於戰鬥中使用騰空擊倒動畫，使其成為螳螂刀的終結技，而非是正常的終結技動畫。",
+
+        ["zkvtd_settings.MTBAnimSwap.RandomChoice.label"] = "也能使用普通的螳螂刀終結技",
+        ["zkvtd_settings.MTBAnimSwap.RandomChoice.tooltip"] = "切換此選項可讓模組於戰鬥中使用騰空擊倒動畫時，隨機選用螳螂刀終結技動畫或原始終結技動畫。\n如果先前設定關閉，則此項無效。",
+
+        ["zkvtd_settings.Misc_Stealth.MeleeMult.label"] = "潛行近戰傷害倍數",
+        ["zkvtd_settings.Misc_Stealth.MeleeMult.tooltip"] = "此傷害倍數適用於潛行攻擊。\n足夠高的傷害可觸發終結技，將強力攻擊（例如螳螂刀的騰空攻擊）轉變為即時擊殺。\n在基本遊戲內預設是 +30% 傷害（即; 1.3）",
     }
     AddStringsForLanguage("zh-tw", strings_ZHTW)
 
