@@ -16,6 +16,7 @@ end
 -- ====================================================================================================================
 -- Localization Strings for ZKVTD
 -- Any missing entries will just show the English string as default
+-- Please submit translations on GitHub: https://github.com/Kvalyr/ZKV_Takedowns
 -- ====================================================================================================================
 
 function i18n_strings:Init()
@@ -44,12 +45,12 @@ function i18n_strings:Init()
         ["Cyb_MantisBlades_Back.label"] = "Double-Impale-and-Lift Finisher (Behind)",
         ["Cyb_MantisBlades_Back.tooltip"] = "Double-Impale-and-Lift Finisher (Behind)",
 
-        ["ZKVTD_Takedown_HeavyAttack01_QuickDeath.label"] = "Heavy Attack 1",
-        ["ZKVTD_Takedown_HeavyAttack01_QuickDeath.tooltip"] = "Heavy Attack 1",
-        ["ZKVTD_Takedown_HeavyAttack02_QuickDeath.label"] = "Heavy Attack 2",
-        ["ZKVTD_Takedown_HeavyAttack02_QuickDeath.tooltip"] = "Heavy Attack 2",
-        ["ZKVTD_Takedown_ComboAttack03_QuickDeath.label"] = "Combo Attack 3",
-        ["ZKVTD_Takedown_ComboAttack03_QuickDeath.tooltip"] = "Combo Attack 3",
+        ["ZKVTD_Takedown_HeavyAttack01.label"] = "Heavy Attack 1",
+        ["ZKVTD_Takedown_HeavyAttack01.tooltip"] = "Heavy Attack 1",
+        ["ZKVTD_Takedown_HeavyAttack02.label"] = "Heavy Attack 2",
+        ["ZKVTD_Takedown_HeavyAttack02.tooltip"] = "Heavy Attack 2",
+        ["ZKVTD_Takedown_ComboAttack03.label"] = "Combo Attack 3",
+        ["ZKVTD_Takedown_ComboAttack03.tooltip"] = "Combo Attack 3",
         ["ZKVTD_Takedown_BlockAttack.label"] = "Defensive Attack",
         ["ZKVTD_Takedown_BlockAttack.tooltip"] = "Defensive Attack",
         ["ZKVTD_Takedown_SafeAttack.label"] = "Safe Attack",
@@ -105,7 +106,7 @@ function i18n_strings:Init()
     -- ====================================================================================================================
 
     -- Polski
-    -- Initial translation done with Google Translate - Corrections welcome!
+    -- Initial translation done with Google Translate - Corrections welcome at https://github.com/Kvalyr/ZKV_Takedowns!
     local strings_PL = {
         ["zkvtd_settings.category.takedowns"] = "Takedowns",
         ["zkvtd_settings.category.mtb_animswap"] = "Mantis Blades Wykańczacze",

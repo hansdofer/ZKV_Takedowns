@@ -1,16 +1,9 @@
 /*
 // ZKV_Takedowns by Kvalyr
 
-// TODO
-* Configurability
-    * Add a mod settings UI
-
 // Known issues:
 * Weapon in hand during aerial takedowns
     * Not a huge problem. Looks better, IMO.
-
-// Untested:
-* Non-mantis arm cyberware
 
 */
 
@@ -137,37 +130,75 @@ public final static func ZKV_IsMantisBladesActive(owner: ref<GameObject>) -> Boo
 //         return;
 //     }
 
+public final static func CatchAndCoerceUnarmed(weaponType: gamedataItemType) -> gamedataItemType{
+    switch weaponType {
+        // Equipped weapon sometimes returns as clothing slots.. Let's just catch them all
+        case gamedataItemType.Clo_Face:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_Feet:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_Head:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_InnerChest:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_Legs:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_OuterChest:
+            return gamedataItemType.Wea_Fists;
+        case gamedataItemType.Clo_Outfit:
+            return gamedataItemType.Wea_Fists;
+        default:
+            return weaponType;
+    };
+}
 
-public final static func ZKV_Takedowns_LethalityEffectByWeapon(weaponType: gamedataItemType, aerial: Bool) -> CName {
+public final static func ZKV_Takedowns_IsWeaponLethal(weaponType: gamedataItemType) -> Bool {
     let nonLethalBluntKey: TweakDBID = TDBID.Create(s"ZKVTD.Takedowns.nonLethalBlunt");
     let nonLethalBlunt: Bool = TweakDBInterface.GetBool(nonLethalBluntKey, true);
-    let lethalityTag: CName = n"kill";
-    let bluntTag: CName = n"kill";
-    if nonLethalBlunt{
-        if aerial {
-            bluntTag = n"setUnconsciousAerialTakedown";
-        }else {
-            bluntTag = n"setUnconscious";
+    let lethal: Bool = true;
+
+    if nonLethalBlunt {
+        // Equipped weapon sometimes returns as clothing slots.. Let's just catch them all
+        weaponType = CatchAndCoerceUnarmed(weaponType);
+        switch weaponType {
+            // Blunt weapons
+            case gamedataItemType.Wea_Fists:
+                lethal = false;
+                break;
+            case gamedataItemType.Wea_OneHandedClub:
+                lethal = false;
+                break;
+            case gamedataItemType.Wea_TwoHandedClub:
+                lethal = false;
+                break;
+            case gamedataItemType.Wea_Hammer:
+                lethal = false;
+                break;
+            case gamedataItemType.Cyb_StrongArms:
+                lethal = false;
+                break;
+            default:
+                break;
         };
     };
-    switch weaponType {
-        // TODO: Can switch cases just fall through in this lang?
-        case gamedataItemType.Wea_Fists:
-            lethalityTag = bluntTag;
-            break;
-        case gamedataItemType.Wea_OneHandedClub:
-            lethalityTag = bluntTag;
-            break;
-        case gamedataItemType.Wea_TwoHandedClub:
-            lethalityTag = bluntTag;
-            break;
-        case gamedataItemType.Cyb_StrongArms:
-            lethalityTag = bluntTag;
-            break;
-        default:
-            break;
-    };
-    ZKVLog("ZKV_Takedowns_LethalityEffectByWeapon - tag: " + NameToString(lethalityTag));
+    ZKVLog("ZKV_Takedowns_IsWeaponLethal: " + lethal);
+    return lethal;
+}
+
+
+public final static func ZKV_Takedowns_GetLethalityEffectByWeapon(weaponType: gamedataItemType, aerial: Bool) -> CName {
+    let lethalityTag: CName = n"kill";
+    let bluntTag: CName = n"setUnconscious";
+    let nonLethalBluntKey: TweakDBID = TDBID.Create(s"ZKVTD.Takedowns.nonLethalBlunt");
+    let nonLethalBlunt: Bool = TweakDBInterface.GetBool(nonLethalBluntKey, true);
+    let weaponLethal: Bool = ZKV_Takedowns_IsWeaponLethal(weaponType);
+    if !weaponLethal {
+        if aerial {
+            bluntTag = n"setUnconsciousAerialTakedown";
+        };
+        return bluntTag;
+    }
+    ZKVLog("ZKV_Takedowns_GetLethalityEffectByWeapon - tag: " + NameToString(lethalityTag));
     return lethalityTag;
 }
 
@@ -253,36 +284,21 @@ public final static func ZKV_Takedowns_GetAvailableAnimsForWeapon(weaponType: ga
 }
 
 public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataItemType, count: Int32) -> array<CName>{
-    // let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType);
     let prefix: String = ZKV_Takedowns_GetTDBIDPrefixForWeaponType(weaponType, true);
-    // let animKey: TweakDBID;
-    // let animString: String;
-    // let animArray: array<CName>;
-    // let i: Int32;
-
-    ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - count: " + count + " - prefix: " + prefix);
-
-    // if count < 1 {
-    //     ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - Returning empty anim array! - weaponType: " + ToString(weaponType) + " - count: " + ToString(count));
-    //     return animArray;
-    // }
-
-    // i = 0;
-    // while i < count {
-    //     animKey = TDBID.Create(prefix + ToString(i));
-    //     animString = TweakDBInterface.GetString(animKey, s"");
-    //     if NotEquals(animString, ""){
-    //         ArrayPush(animArray, StringToName(animString));
-    //     };
-    //     i += 1;
-    // };
-    // return animArray;
     let animStateKey: TweakDBID;
     let animState: Bool;
     let animString: String;
     let animArray: array<CName>;
     let i: Int32;
     let availableAnimsArray: array<String> = ZKV_Takedowns_GetAvailableAnimsForWeapon(weaponType);
+
+    ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - weaponType: " + ToString(weaponType) + " - count: " + count + " - prefix: " + prefix);
+
+    if count < 1 {
+        ZKVLog(s"ZKV_Takedowns_GetAnimsForWeapon - Returning empty anim array! - weaponType: " + ToString(weaponType) + " - count: " + ToString(count));
+        return animArray;
+    }
+
 
     // ZKVTD.MeleeTakedowns:AnimStates:Wea_Fists:AerialTakedown_Back_Simple
 
@@ -293,7 +309,6 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
         animState = TweakDBInterface.GetBool(animStateKey, false);
         ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - Checking state for:" + prefix + s":" + animString);
         ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - State:" + animState);
-        // animString = TweakDBInterface.GetString(animKey, s"");
         if animState {
             ArrayPush(animArray, StringToName(animString));
         };
@@ -347,19 +362,38 @@ public final static func ZKV_Takedowns_GetBestEffectSetForEffectTag(activator: w
 }
 
 
+public final static func ZKV_Takedowns_GetEffectTagNonLethalVariant(owner: ref<GameObject>, effectTag: CName) -> CName
+{
+    let effectSet: CName = n"zkv_takedowns";
+    if !Equals(effectTag, n"AerialTakedown_Back_Simple") && !Equals(effectTag, n"AerialTakedown_Simple")
+    {
+        effectTag = StringToName( NameToString( effectTag ) + s"_NonLethal" );
+    };
+    ZKV_IsEffectTagInEffectSet(owner, n"zkv_takedowns", effectTag);
+
+    if !ZKV_Takedowns_GetBestEffectSetForEffectTag(owner, effectTag, effectSet){
+        ZKVLog(s"ERROR: Failed to get effectSet for NonLethal tag. Falling back to default. effectTag: " + NameToString(effectTag));
+        effectTag = n"finisher_default_NonLethal";
+    }
+    return effectTag;
+}
+
+
 public final static func ZKV_Takedowns_DoFinisherByWeaponType(
     scriptInterface: ref<StateGameScriptInterface>,
     owner: ref<GameObject>,
     target: ref<GameObject>,
     weaponType: gamedataItemType
 ) -> CName {
-    let countTakedowns: Int32 = ZKV_Takedowns_GetEnabledAnimCountForWeapon(weaponType);
     let effectTag: CName;
     let effectSet: CName = n"playFinisher";
     let randIndex: Int32;
     let randMax: Int32;
     let effectArray_takedowns: array<CName>;
-
+    let lethal: Bool = true;
+    weaponType = CatchAndCoerceUnarmed(weaponType);
+    let countTakedowns: Int32 = ZKV_Takedowns_GetEnabledAnimCountForWeapon(weaponType);
+    lethal = ZKV_Takedowns_IsWeaponLethal(weaponType);
 
     if countTakedowns < 1 {
         return n"finisher_default";
@@ -367,6 +401,10 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(
 
     effectArray_takedowns = ZKV_Takedowns_GetAnimsForWeapon(weaponType, countTakedowns);
     effectTag = ZKV_Takedowns_GetRandomFromArray(effectArray_takedowns);
+
+    if !lethal {
+        effectTag = ZKV_Takedowns_GetEffectTagNonLethalVariant(owner, effectTag);
+    }
 
     // Get the best effectSet for the requested effectTag, or fall back to default
     if !ZKV_Takedowns_GetBestEffectSetForEffectTag(owner, effectTag, effectSet){
@@ -390,7 +428,6 @@ public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: re
     // TODO: This isn't ideal as we could end up double-rewarding Ninjutsu XP for takedowns
     RPGManager.GiveReward(owner.GetGame(), t"RPGActionRewards.Stealth", Cast<StatsObjectID>(target.GetEntityID()));
 }
-
 
 
 @replaceMethod(LocomotionTakedownEvents)
@@ -455,7 +492,7 @@ public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: re
             // Kv
             // Repurpose unused KillTarget enumValue as Melee-weapon-takedown
             case ETakedownActionType.KillTarget:
-                effectTag = ZKV_Takedowns_LethalityEffectByWeapon(ZKV_GetActiveWeaponType(owner), false);
+                effectTag = ZKV_Takedowns_GetLethalityEffectByWeapon(ZKV_GetActiveWeaponType(owner), false);
                 let zkv_animName: CName = ZKV_Takedowns_DoFinisherByWeaponType(scriptInterface, owner, target, ZKV_GetActiveWeaponType(owner));
                 if !(Equals(effectTag, n"setUnconsciousAerialTakedown") || Equals(effectTag, n"setUnconscious")){
                     (target as NPCPuppet).SetMyKiller(owner);
@@ -489,11 +526,3 @@ public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: re
     scriptInterface.GetScriptableSystem(n"DataTrackingSystem").QueueRequest(dataTrackingEvent);
     this.DefeatTarget(stateContext, scriptInterface, owner, target, gameEffectName, effectTag);
   }
-
-
-/*
-    protected final func PlayExitAnimation(scriptInterface: ref<StateGameScriptInterface>, owner: ref<GameObject>, target: ref<GameObject>, syncedAnimName: CName) -> Void {
-        let workspotSystem: ref<WorkspotGameSystem> = scriptInterface.GetWorkspotSystem();
-        workspotSystem.SendJumpToAnimEnt(owner, syncedAnimName, true);
-    }
-*/

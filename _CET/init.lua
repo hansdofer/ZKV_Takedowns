@@ -44,8 +44,6 @@ end
 local function SetupMeleeTakedowns()
     ZKVTD.debug("SetupMeleeTakedowns")
 
-    -- ZKVTD.doFile("melee_takedowns/config_takedown_animations.lua")  -- Old setup
-
     ZKVTD:InitModule("MeleeTakedowns_Constants")
     ZKVTD:InitModule("MeleeTakedowns")
 end
@@ -62,7 +60,6 @@ local function onInit()
     utils.doFile("settings/settingsUI_api.lua")
     utils.doFile("settings/settings.lua")
 
-    -- ZKVTD.doFile("melee_takedowns/config_takedown_animations.lua")  -- Old setup
     ZKVTD.doFile("melee_takedowns/melee_takedowns.lua")
     ZKVTD.doFile("melee_takedowns/constants.lua")
 

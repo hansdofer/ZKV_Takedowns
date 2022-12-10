@@ -69,15 +69,15 @@ function ConfigDefaults:Init()
         },
         Wea_OneHandedClub = {
             --
-            "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
+            "ZKVTD_Takedown_HeavyAttack02",
         },
         Wea_TwoHandedClub = {
             --
-            "ZKVTD_Takedown_ComboAttack03_QuickDeath",
+            "ZKVTD_Takedown_ComboAttack03",
         },
         Wea_Hammer = {
             --
-            "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
+            "ZKVTD_Takedown_HeavyAttack02",
         },
         Cyb_MantisBlades = {
             --

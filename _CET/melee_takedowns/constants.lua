@@ -120,13 +120,15 @@ function constants:Init()
         -- Repurposed attack animations
         -- _QuickDeath == Target dies and ragdolls quickly, instead of using katana front-stab death sequence
         "ZKVTD_Takedown_HeavyAttack01", -- Strong attack from neutral
-        "ZKVTD_Takedown_HeavyAttack01_QuickDeath",
+        "ZKVTD_Takedown_HeavyAttack01_NonLethal",
         "ZKVTD_Takedown_HeavyAttack02", -- Strong attack 2nd hit in combo
-        "ZKVTD_Takedown_HeavyAttack02_QuickDeath",
+        "ZKVTD_Takedown_HeavyAttack02_NonLethal",
         "ZKVTD_Takedown_ComboAttack03", -- Light attack, third hit in combo
-        "ZKVTD_Takedown_ComboAttack03_QuickDeath",
+        "ZKVTD_Takedown_ComboAttack03_NonLethal",
         "ZKVTD_Takedown_SafeAttack", -- ??? Unsure when the base game uses this attack
+        "ZKVTD_Takedown_SafeAttack_NonLethal", -- ??? Unsure when the base game uses this attack
         "ZKVTD_Takedown_BlockAttack", -- Strong attack from block (Defensive attack)
+        "ZKVTD_Takedown_BlockAttack_NonLethal", -- Strong attack from block (Defensive attack)
     }
     local takedownAnimsIndices = utils.Table_createInverseArray_Strings(takedownAnims)
     constants.takedownAnims = takedownAnims
@@ -137,7 +139,12 @@ function constants:Init()
     -- ====================================================================================================================
     -- Allowed animations by weapon
 
-    local allowedAnims_FISTS = { "finisher_default", "AerialTakedown_Back_Simple", "AerialTakedown_Simple" }
+    local allowedAnims_FISTS = {
+        --
+        "finisher_default",
+        "AerialTakedown_Back_Simple",
+        "AerialTakedown_Simple",
+    }
 
     local allowedAnims_LONG_BLADE = {
         "Wea_Katana",
@@ -150,7 +157,12 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_SHORT_BLADE = { "ZKVTD_Knife_backstab", "ZKVTD_Takedown_SafeAttack", "ZKVTD_Takedown_BlockAttack" }
+    local allowedAnims_SHORT_BLADE = {
+        --
+        "ZKVTD_Knife_backstab",
+        "ZKVTD_Takedown_SafeAttack",
+        "ZKVTD_Takedown_BlockAttack",
+    }
 
     local allowedAnims_MEDIUM_BLADE = {
         "Wea_Katana",
@@ -165,11 +177,24 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_ONE_HANDED_CLUB = { "ZKVTD_Takedown_HeavyAttack02_QuickDeath" }
+    local allowedAnims_ONE_HANDED_CLUB = {
 
-    local allowedAnims_TWO_HANDED_CLUB = { "ZKVTD_Takedown_ComboAttack03_QuickDeath" }
+        --
+        "ZKVTD_Takedown_ComboAttack03",
+        "ZKVTD_Takedown_HeavyAttack02",
+    }
 
-    local allowedAnims_HAMMER = { "ZKVTD_Takedown_HeavyAttack02_QuickDeath" }
+    local allowedAnims_TWO_HANDED_CLUB = {
+        --
+        "ZKVTD_Takedown_ComboAttack03",
+        "ZKVTD_Takedown_HeavyAttack02",
+    }
+
+    local allowedAnims_HAMMER = {
+        --
+        "ZKVTD_Takedown_ComboAttack03",
+        "ZKVTD_Takedown_HeavyAttack02",
+    }
 
     local allowedAnims_MANTIS_BLADES = {
         "Cyb_MantisBlades",
@@ -180,7 +205,10 @@ function constants:Init()
         "ZKVTD_Takedown_BlockAttack",
     }
 
-    local allowedAnims_MONOWIRE = { "ZKVTD_Monowire_behead_behind" }
+    local allowedAnims_MONOWIRE = {
+        --
+        "ZKVTD_Monowire_behead_behind",
+    }
 
     local allowedAnimsByWeapon = {
         Wea_Fists = allowedAnims_FISTS,
