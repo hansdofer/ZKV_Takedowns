@@ -31,36 +31,6 @@ function constants:Init()
 
     utils.TweakDB_CreateArrayOfFlatsAndIndices(weaponTypes, constants.tweakDBKey_constants_WeaponTypes, true)
 
-    -- local weaponCategories_sharedAnims = {
-    --     -- Wea_ShortBlade = "Wea_ShortBlade",
-    --     Wea_Knife = "Wea_ShortBlade",
-    --     Wea_Chainsword = "Wea_ShortBlade",
-
-    --     -- Wea_LongBlade = "Wea_LongBlade",
-    --     Wea_Katana = "Wea_LongBlade",
-    --     Wea_Machete = "Wea_LongBlade",
-
-    --     -- Wea_Fists = "Wea_Fists",
-    --     Cyb_StrongArms = "Wea_Fists",
-    -- }
-    -- constants.weaponCategories_sharedAnims = weaponCategories_sharedAnims
-
-    -- function MeleeTakedowns:GetSharedAnimsForWeaponType(weaponType)
-    --     local sharedAnims = weaponCategories_sharedAnims[weaponType]
-    --     if sharedAnims then
-    --         return sharedAnims
-    --     end
-    --     return weaponType
-    -- end
-
-    -- for _, weaponType in ipairs(constants.weaponTypes) do
-    --     local animSetKey = MeleeTakedowns:GetSharedAnimsForWeaponType(weaponType)
-    --     TweakDB:SetFlat(constants.tweakDBKey_constants_SharedAnims .. ":" .. weaponType, animSetKey)
-    -- end
-    -- for weaponType, animSetKey in pairs(weaponCategories_sharedAnims) do
-    --     TweakDB:SetFlat(constants.tweakDBKey_constants_SharedAnims .. ":" .. weaponType, animSetKey)
-    -- end
-
     -- ====================================================================================================================
 
     function MeleeTakedowns:ValidateWeaponType( weaponType )

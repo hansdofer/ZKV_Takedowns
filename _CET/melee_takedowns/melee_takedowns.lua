@@ -160,34 +160,6 @@ end
 --     end
 -- end
 
-local function setupAnims_old( self )
-    -- Old pre-0.4.0 setup
-    local takedownAnims = self.Config.GetValue("takedownAnims")
-    if takedownAnims == nil then
-        self.printError("nil takedownAnims table!")
-        takedownAnims = {}
-    end
-    for weapon_key, animTable in pairs(takedownAnims) do
-        local takedownsCount = #animTable
-        -- self.debug("ZKVTD ===================================== ")
-        -- self.debug("ZKVTD", weapon_key, takedownsCount)
-
-        local takedownsCountFlatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. ".count"
-        TweakDB:SetFlat(takedownsCountFlatKey, tostring(takedownsCount))
-
-        for idx_key, anim in ipairs(animTable) do
-            local flatKey = "ZKVTD.MeleeTakedownAnims." .. weapon_key .. idx_key - 1
-            TweakDB:SetFlat(flatKey, anim)
-        end
-        -- self.debug(weapon_key, takedownsCount)
-        -- e.g.;
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana0
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana1
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana2
-        -- ZKVTD.MeleeTakedownAnims.Wea_Katana.count -> "3"
-    end
-end
-
 local function setupAnims()
 
     for _, weaponType in ipairs(ZKVTD.constants.weaponTypes) do
@@ -206,16 +178,10 @@ end
 
 function MeleeTakedowns:Init()
     ZKVTD.debug("MeleeTakedowns:Init()")
-    -- if not ZKVTD.Config.GetValue("takedownAnims_defaultsLoaded", false) then
-    --     ZKVTD.printError("Cannot initialize melee takedowns without loading default config first.")
-    --     return
-    -- end
 
     SetupInteractions_Lethal()
 
     -- SetupInteractions_NonLethal() --TODO: For fists & blunt
-
-    -- setupAnims_old(ZKVTD)
 
     setupAnims()
 

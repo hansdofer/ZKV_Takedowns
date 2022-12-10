@@ -10,33 +10,23 @@
 
 
 :: Configuration ::
-There's no configuration UI yet. Edit the `config.lua` file to change settings, but be careful and heed the warnings.
-A future version will improve on this.
+There is a configuration UI using 'Native Settings UI'.
 
 
 :: Known Issues ::
-♦ Weapon in hand during aerial takedowns
-• • Not a huge problem. It actually looks better, IMO. You can choose to holster your weapon first, or treat it as a pistol-whip.
 ♦ Lack of suitable takedown animations for most weapons
 • • This mod does not add new animations - It just reuses and repurposes animations already in the game.
-• • Some weapons (Knife, Machete, Monowire, etc.) don't have great takedown animations and mostly share a default.
-• • There are no good animations for takedowns using knives, etc. - So we use those from other weapons, or keep the weapon in-hand while doing an unarmed takedown.
-♦ Minimal playtesting so far
-• • I've mostly tested this with Mantis Blades, Katana, Knife and Bare Fists. Other weapons should work fine, but report issues with other weapons if you find them
-• • No testing done with perks that enable in-combat grappling or takedown-and-dispose. In theory, these should work exactly as before - As this mod doesn't touch grappling.
+• • Some weapons don't have great takedown animations and mostly share a default.
+• • The 'new' animations added by this mod are just existing base-game animations kitbashed together with varying results.
 ♦ Existing CP2077 problems with T-posing, bad ragdolls, un-synced animations, etc.
 • • The base game's implementations of Takedowns, Finishers, Ragdolls and synced-animations are flaky already without mods. Don't expect perfection here.
-
+♦ Takedowns with blunt weapons being lethal when "Non-lethal blunt" is enabled:
+• • This should be fixed as of 0.4.0, but there may still be instances of it occurring. If you absolutely must not kill the target, use a normal grapple->takedown
 
 :: Future Plans ::
 ♦ More animations (Unlikely, as I'm not an animator - but if another mod adds new takedowns or finishers, this mod will automatically support them)
-
-Plans for 0.4.x:
 ♦ Reduce control & camera lock-in during finishers & takedowns
 ♦ Optionally speed up some finishers that feel too slow in the midst of combat
-
-Plans for ???:
-♦ Re-use heavy attack & defensive attack animations as takedown animations for certain weapons
 
 
 :: Requirements ::

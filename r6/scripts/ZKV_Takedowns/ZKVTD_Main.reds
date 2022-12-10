@@ -307,8 +307,7 @@ public final static func ZKV_Takedowns_GetAnimsForWeapon(weaponType: gamedataIte
         animString = availableAnimsArray[i];
         animStateKey = TDBID.Create(prefix + s":" + animString);
         animState = TweakDBInterface.GetBool(animStateKey, false);
-        ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - Checking state for:" + prefix + s":" + animString);
-        ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - State:" + animState);
+        // ZKVLog("ZKV_Takedowns_GetAnimsForWeapon() - Checking state for:" + prefix + s": " + animString + " - State: " + animState);
         if animState {
             ArrayPush(animArray, StringToName(animString));
         };
@@ -421,11 +420,11 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(
 }
 
 
-public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: ref<GameObject>){
-    // TODO: Can't find the call-chain that ends with GiveReward() from the normal takedown
-    // TODO: This isn't ideal as we could end up double-rewarding Ninjutsu XP for takedowns
-    RPGManager.GiveReward(owner.GetGame(), t"RPGActionRewards.Stealth", Cast<StatsObjectID>(target.GetEntityID()));
-}
+// public final static func ZKV_Takedowns_GiveXP(owner: ref<GameObject>, target: ref<GameObject>){
+//     // TODO: Can't find the call-chain that ends with GiveReward() from the normal takedown
+//     // TODO: This isn't ideal as we could end up double-rewarding Ninjutsu XP for takedowns
+//     RPGManager.GiveReward(owner.GetGame(), t"RPGActionRewards.Stealth", Cast<StatsObjectID>(target.GetEntityID()));
+// }
 
 
 @replaceMethod(LocomotionTakedownEvents)
