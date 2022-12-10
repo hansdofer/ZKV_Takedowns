@@ -181,7 +181,7 @@ public final static func ZKV_Takedowns_IsWeaponLethal(weaponType: gamedataItemTy
                 break;
         };
     };
-    ZKVLog("ZKV_Takedowns_IsWeaponLethal: " + lethal);
+    // ZKVLog("ZKV_Takedowns_IsWeaponLethal: " + lethal);
     return lethal;
 }
 
@@ -417,9 +417,7 @@ public final static func ZKV_Takedowns_DoFinisherByWeaponType(
 
     TakedownGameEffectHelper.FillTakedownData(scriptInterface.executionOwner, owner, target, effectSet, effectTag);
 
-    return n"heavy_attack_01";
-
-    // return effectTag;
+    return effectTag;
 }
 
 
